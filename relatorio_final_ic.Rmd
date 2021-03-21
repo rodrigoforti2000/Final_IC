@@ -1,0 +1,86 @@
+---
+output: 
+  pdf_document:
+    fig_crop: no
+#bibliography: "referencias.bib"
+nocite: '@*'
+link-citations: true
+colorlinks: false
+fontsize: 11pt
+documentclass: article
+geometry: 
+ - a4paper
+ - textwidth=16cm
+ - textheight=21cm
+header-includes:
+  - \usepackage[brazil, english, portuguese]{babel}
+  - \usepackage[utf8]{inputenc}
+  - \usepackage[T1]{fontenc}
+  - \usepackage[fixlanguage]{babelbib}
+  - \usepackage{times}
+  - \usepackage{caption} 
+  - \captionsetup[table]{skip=10pt}
+  - \usepackage{amsmath}
+---
+
+```{=tex}
+\begin{titlepage} 
+
+\begin{center} 
+{\large Universidade Estadual de Campinas}\\[0.2cm] 
+{\large Instituto de Matemática, Estatística e Computação Científica}\\[0.2cm] 
+{\large Departamento de Estatística}\\[4cm]
+
+{\bf \huge  Modelo de regressão logística para a predição de estado de saúde animal a partir de variáveis escalares e funcionais}\\[0.5cm]
+\line(1,0){450}
+
+{\large Relatório Científico Final do projeto na modalidade Iniciação Científica, fomentado pela Fundação de Amparo à Pesquisa do Estado de São Paulo.}\\[0.5cm]
+\line(1,0){450}
+
+{\large Projeto FAPESP: 2020/01436-0}\\[2cm]
+
+{\large Pesquisador Responsável:}\\[0.2cm]
+{\large Rodrigo Forti}\\[5cm]
+
+{\large Americana}\\[0.2cm]
+{\large 2020}
+\end{center}
+
+\end{titlepage}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.height = 3, 
+                      fig.width = 6, 
+                      fig.pos='H',
+                      OutDec = ',',
+                      comment = NA)
+
+
+options(OutDec = ",")
+```
+
+# Informações Gerais do Projeto
+
+Título do projeto: Modelo de regressão logística para a predição de estado de saúde animal a partir de variáveis escalares e funcionais
+
+Nome do pesquisador responsável: Rodrigo Forti
+
+Instituição sede do projeto: Instituto de Matemática, Estatística e Computação Científica da Universidade Estadual de Campinas
+
+Equipe de pesquisa: Rodrigo Forti e Mariana Rodrigues Motta
+
+Número do projeto de pesquisa: 2020/01436-0
+
+Período de vigência: 01/09/2020 a 31/08/2021
+
+Período coberto por este relatório científico: 11/02/2021 a 31/08/2021
+
+\newpage
+
+\tableofcontents
+
+\newpage
