@@ -21,6 +21,8 @@ header-includes:
   - \usepackage{caption} 
   - \captionsetup[table]{skip=10pt}
   - \usepackage{amsmath}
+  - \usepackage{indentfirst}
+indent: true
 ---
 
 ```{=tex}
@@ -43,7 +45,7 @@ header-includes:
 {\large Rodrigo Forti}\\[5cm]
 
 {\large Americana}\\[0.2cm]
-{\large 2020}
+{\large 2021}
 \end{center}
 
 \end{titlepage}
@@ -65,22 +67,873 @@ options(OutDec = ",")
 
 # Informações Gerais do Projeto
 
-Título do projeto: Modelo de regressão logística para a predição de estado de saúde animal a partir de variáveis escalares e funcionais
+* Título do projeto: Modelo de regressão logística para a predição de estado de saúde animal a partir de variáveis escalares e funcionais
 
-Nome do pesquisador responsável: Rodrigo Forti
+* Nome do pesquisador responsável: Rodrigo Forti
 
-Instituição sede do projeto: Instituto de Matemática, Estatística e Computação Científica da Universidade Estadual de Campinas
+* Instituição sede do projeto: Instituto de Matemática, Estatística e Computação Científica da Universidade Estadual de Campinas
 
-Equipe de pesquisa: Rodrigo Forti e Mariana Rodrigues Motta
+* Equipe de pesquisa: Rodrigo Forti e Mariana Rodrigues Motta
 
-Número do projeto de pesquisa: 2020/01436-0
+* Número do projeto de pesquisa: 2020/01436-0
 
-Período de vigência: 01/09/2020 a 31/08/2021
+* Período de vigência: 01/09/2020 a 31/08/2021
 
-Período coberto por este relatório científico: 11/02/2021 a 31/08/2021
+* Período coberto por este relatório científico: 11/02/2021 a 31/08/2021
 
 \newpage
 
 \tableofcontents
 
 \newpage
+
+# Resumo
+
+## Introdução
+
+
+O período de transição entre o final da gravidez em vacas e o período de lactação precoce (também chamado período periparturiente) é certamente o estágio mais importante do ciclo de lactação destes animais. A maioria das doenças infecciosas e distúrbios metabólicos ocorre durante esse período. A febre do leite, a cetose, as membranas fetais retidas, a metrite e o abomaso deslocado afetam as vacas diminuindo a produção de leite e prejudicando o seu bem-estar durante o período peripartidário. Há uma maior suscetibilidade para doenças durante o período peri-parturiente que leva, por exemplo, ao aumento de incidência de mastite no animais. Assim, a ocorrência de problemas de saúde se concentra proporcionalmente no período periparturiente, que é relativamente curto, o que certamente preocupa produtores de leite (Drackley ,1999). Como afirmado por Goff and Horst (1997), a transição do estado gestante, não lactante, para o estado não gestante e lactante, é muitas vezes uma experiência desastrosa para a vaca. Alguns problemas de saúde e reprodutivos podem ser resultado do aumento do estresse de que vacas de alta produção estão sob no início da lactação (Kaufman et al. 2018).
+
+Além disso, no início da lactação, a ingestão alimentar é incapaz de atender às demandas de alta produção de leite. A vaca, portanto entra em um período de balanço energético negativo que leva à mobilização de reservas corporais para equilibrar déficit entre consumo de energia dos alimentos e produção de energia do leite (Lago et al. 2001). Lago et al. (2001) também defendem que processo de mobilização parece afetar o bem-estar da vaca e outras vias biológicas comprometidos à medida que a energia de entrada é direcionada para produção.
+
+Assim, a saúde do animal durante o período de lactação é fator determinante na lucratividade dos produtores. Limitações nutricionais ou de manejo durante esse período podem impedir a capacidade da vaca de atingir a produção máxima de leite. Desta forma monitorar índices vitais da vaca, assim como do ambiente onde está inserido, é condição essencial para aprimorar o bem-estar animal e a lucratividade no período de alta incidência de doenças em vacas periparturientes
+
+## Dados
+
+Os dados a serem utilizados neste projeto fazem parte de uma base de dados do laboratório Dairy Cattle Biology and Management da Universidade de Cornell, EUA. Estes dados foram intermediados pelo pesquisador Guilherme Rosa, da University of Wisconsin, EUA, mediante colaboração no projeto FAPESP 2017/15306-9, sob coordenação da Profa. Dra Nancy Lopes Garcia, e tendo como no projeto a Profa. Dra. Mariana Rodrigues Motta.
+
+Os dados foram coletados a partir da análise clínica diária do estado de saúde 500 vacas. Os dados contém informações sobre características individuais das vacas, desempenho em produção de leite e eventos das lactações anteriores e da parição atual. Além disso, os dados foram coleatdos através de múltiplos sensores adaptados ao animal durante 3 sessões diárias para avaliar aspectos do leite, tais como porcentagem de gordura, de proteína, dados de lactose e conductividade, além de dados sobre total de passos dados, tempo de ruminação e tempo de repouso do animal.
+
+Os dados considerados neste estudo devem ser usados para treinar, validar e testar modelos do Sistema de Monitoramento de Saúde Animal (AHMS) do projeto USDA da Dairy Laboratório de Biologia e Gerenciamento de Gado da Universidade de Cornell. Os dados contém informações sobre vacas e leite coletado. O conjunto de dados principal corresponde ao exame clínico diário dos animais são necessários para analisar o período de uma semana antes até três semanas depois do parto em todos os animais. Diariamente, informações de uma vaca sobre um distúrbio de saúde são coletadas.
+
+O estudo de Cornell compreende três fases, Fase I, Fase II e Fase III. O objetivo do estudo da Fase I é caracterizar o padrão de doença, avaliando como os parâmetros mudam com relação ao status do animal. No estudo da Fase II, o foco é desenvolver alertas que sirvam de indicadores aos agricultores quando uma vaca está doente, visando criar uma combinação de vários parâmetros que informam sobre a saúde do animal. A Fase III do estudo compreende a validação dos métodos usados com dados da Fase I, usando ferramentas desenvolvidas em campo em tempo real e, em seguida, avaliando falsos positivos e sensibilidade do método.
+
+A descrição das variáveis do conjunto de dados se encontram na Tabela 1 e 2.
+
+## Objetivos
+
+Neste estudo, os objetivos estão concentrados na Fase I, que busca caracterizar o padrão de doença, avaliando como os parâmetros se comportam com relação ao status do animal. As variáveis utilizadas para modelar a probabilidade do animal estar doente serão consideradas na forma escalar e de função e a ideia é identificar através do ajuste de modelos uma combinação de vários parâmetros que informem sobre a saúde do animal dentro de um determinado período de tempo. Por exemplo, é de interesse predizer a probabilidade de uma animal ficar doente no período de cinco dias após o parto a partir da curva de lactação do período. Para modelar a probabilidade de um animal ficar doente consideramos um modelo de regressão logística com covariáveis escalares (número de inseminações, histórico de doenças, etc) e funções de covariáveis, como por exemplo uma função dos dias em lactação do animal.
+
+```{r variáveis}
+library(kableExtra)
+library(knitr)
+
+variaveis = data.frame(Variavel = c("ID","DiasLac","DiasRegimeFechado","DiasSecos","NumBezerro","ProdLeite","Gordura",
+                                    "Proteina","Lactose","Sangue","NumCelSomaticas",
+                                    "TempoRepouso"
+                                    ),
+                       Unidade = c("Número",
+                                   "Dias","Dias","Dias","Número","Gramas", "%",
+                                   "%",
+                                   "%",
+                                   "%",
+                                   "*1000/ml",
+                                   "Minutos"),
+                       Descrição = c(
+                                     "Identificação da vaca",
+                                     "Dias em lactação (dia 0: dia do parto)",
+                                     "Dias em regime Fechado",
+                                     "Dias sem produzir leite",
+                                     "Número de bezerros nascidos no parto",
+                                     "Produção de leite",
+                                     "Gordura no leite",
+                                     "Proteína no leite",
+                                     "Lactose no leite",
+                                     "Sangue no leite",
+                                     "Número de células somáticas no leite",
+                                     "Tempo total de repouso por dia"
+                                     ))
+
+
+variaveis_cont = data.frame(Variavel = c(
+                                    "NumRepousos","DuracaoMediaRepouso",
+                                    "Atividade","RuminacaoUltimas24h","AlimentacaoUltimas24h",
+                                    "Hist_DistDigestivo",
+                                    "Hist_Mastite",
+                                    "Hist_Claudicao",
+                                    "DiasNaoGravida",
+                                    "NInseminada",
+                                    "DuracaoGestacao",
+                                    "DiasPrimeiraParicao",
+                                    "DuracaoLacAnterior"),
+                       Unidade = c("Número","Minutos","Passos/Hora", "Minutos",
+                                   "Gramas",
+                                   "0-1",
+                                   "0-1",
+                                   "0-1",
+                                   "Dias",
+                                   "Número",
+                                   "Dias",
+                                   "Dias",
+                                   "Dias"),
+                       
+                       Descrição = c("Número de repousos por dia",
+                                     "Duração média do cada repouso",
+                                     "Total de passos dados no dia dividido por 24",
+                                     "Ruminação total nas últimas 24 horas",
+                                     "Quantidade de comida ingerida nas últimas 24 horas",
+                                     "Há histórico de distúrbios digestivos - sim(1) não(0)",
+                                     "Há histórico de mastite - sim(1) não(0)",
+                                     "Há histórico de claudicação - sim(1) não(0)",
+                                     "Dias não grávida",
+                                     "Número de vezes que a vaca foi inseminada",
+                                     "Duração da gestação",
+                                     "Idade quando pariu o primeiro bezerro",
+                                     "Duração da lactação anterior"))
+
+kable(variaveis, "latex", col.names = c("Variável", "Unidade", "Descrição"),caption = "Descrição das variáveis do conjunto de dados") %>%
+  column_spec(3:2, width = "4cm") %>%
+  kable_styling(position = "center",latex_options = "HOLD_position")
+
+kable(variaveis_cont, "latex", col.names = c("Variável", "Unidade", "Descrição"),caption = "Descrição das variáveis do conjunto de dados - continuação") %>%
+  column_spec(3:2, width = "6cm") %>%
+  kable_styling(position = "center",latex_options = "HOLD_position")
+
+```
+
+\newpage
+
+# 1 Métodos Estatísticos
+
+Seja $Y_i$ o estado de saúde da vaca i (1 para doente e 0, caso contrário) em um determinado período, e seja $E(Y_i)=p_i$ a probabilidade do animal i estar doente nesse período. Inicialmente ajustamos o modelo de regressão logística (Agresti, 2003) da forma $$ \textrm{logito}(p_i) = \beta_0 + \sum_{j=1}^{J}\beta_jx_{ij} \tag{1},$$ onde $x_{ij}$ representa a j-ésima variável explicativa da vaca i e $\beta_j$, o efeito desta variável no logito. Para essa abordagem, cada vaca possui uma única observação.
+
+Posteriormente, ajustamos o modelo que acomoda as medidas repetidas de cada animal, representadas pelos dias entre 30 dias antes do parto e 40 dias após este evento. Consideramos um efeito aleatório para acomodar a variação intra-animal, devido a repetição de medições das vacas em tempos diferentes. Suponha $Y_{ik}$ seja o estado de saúde da vaca i (1 para doente e 0, caso contrário) em um determinado dia k, e seja $E(Y_{ik})=p_{ik}$ a probabilidade do animal i estar doente no dia k. Consideramos o ajuste de
+
+$$ \textrm{logito}(p_{ik}) = \beta_0 + \sum_{j=1}^{J}f_j(x_{ijk})
++ u_{i} \tag{2}.$$ 
+
+Aqui, $f_j(x)$ são funções suaves de $x_{ijk}$}, $k$ e $j$ são referentes a observação do dia e a variável explicativa, respectivamente. A função $f_j(x)$ será estimada através de 
+
+$$\hat{f_j}(x) = \sum_{p=1}^{P}\hat{B_p}b_p(x) \tag{3},$$ onde $b_p$ são as funções bases e $\hat{B_p}$ seus respectivos coeficientes; e $u_i \sim N(0,\sigma^2)$ é referente aos efeitos aleatórios para os animais analisados.
+
+Para análise exploratória e avaliação da capacidade preditiva dos modelos, foi realizada uma separação aleatória dos animais em estudo em duas partes: 80% dos dados foram utilizados para o análise exploratória e ajuste e 20% para o teste de qualidade de predição do modelo. A forma de checagem da performance do modelo se deu através da curva ROC (Bradley, 1997) conjuntamente com a área sob a curva da mesma (Ballings and Van den Poel (2013)). A área sob a curva da curva ROC quantifica a capacidade do modelo em discriminar entre aqueles animais classificados como doentes dado que de fato são doentes e aqueles classificados como sadios quando na verdade foram observados como tal. Um modelo com capacidade de predição tão informativo quanto um classificador aleatório tem uma área igual a 0,5, já um modelo perfeito tem uma área igual a 1.
+
+Neste trabalho, consideramos um nível de significância igual 0,05. Para realizar o ajuste da regressão logística em (1) utilizamos a própria função base \textit{glm} do software R (R Core Team ,2019). O modelo em (2) foi ajustado por meio da função \textit{gamm} do pacote \textit{mgcv} do programa R. As funções suaves $f_j(x)$ foram estimadas através da expansão de bases de splines de regressão cúbica pela própria função \textit{gamm}. Na função \textit{gamm}, o modelo é ajustado através maximização da quasi-verossimilhança penalizada. Para mais informações sobre o ajuste com variáveis funcionais e efeitos aleatórios veja Wood (2017). 
+
+\newpage
+
+# 2 Estrutura e manipulação dos dados
+
+O conjunto de dados utilizado pra este trabalho apresenta 71 observações para cada uma das 500 vacas estudadas, coletadas 30 dias antes do parto até 40 dias depois, resultando em um total de 35500 observações.
+
+Além disso, o conjunto de dados apresentou diversos dados faltantes. Para contornar esse problema tomou-se o seguinte procedimento: se o animal apresentou poucos dados faltantes para uma variável, esses seriam substituidos pela média daquela variável ao longo das medidas repetidas do animal. Para o animal sem nenhuma informação numa determinada variável, o valor imputado foi a mediana da variável para as vacas com informação
+
+# 3 Resultados 
+
+Foram utilizadas duas abordagens  para resolver o problema de classificação. A primeira faz ajuste de um modelo a partir de uma única observação do estado de saúde do animal, como descrito na Seção 3.1. A segunda faz o ajuste de um modelo considerando medidas repetidas de cada animal, como descrito na Seção 3.2.
+
+```{r pacotes e funcoes}
+library(tidyverse)
+library(MASS)
+library(patchwork)
+library(kableExtra)
+library(AUC)
+library(caret)
+library(mgcv)
+library(gridExtra)
+library(ggpmisc)
+
+#funções
+cv_pleno = function(df, n_cv, n_interacao, ID){
+  #Definindo semente
+  set.seed(42)
+  #pega o número de linhas
+  length_df = nrow(df)
+  length_id = df %>% dplyr::select(ID) %>% n_distinct()
+  #embaralha os numeros de linhas e embaralha o banco
+  rows <- sample(length_df)
+  df = df[rows,]
+  #define o tamanho da parte
+  size_parte = as.integer(length_id/n_cv)
+  #pega os threshold
+  partes = c(1, size_parte)
+  for (i in 2:n_cv){
+    partes[i+1] <- as.integer(size_parte*i)
+  }
+  #bota no teste os referentes da intereção n
+  ID_test = c(partes[n_interacao]:partes[n_interacao+1])
+  test = df %>% filter(ID %in% ID_test)
+  #e filtra por aqueles que não estão no teste
+  train = df %>% filter(!ID %in% ID_test)
+  return(list("train" = train,
+              "test" = test))
+}
+
+cv_split = function(df, n_cv, n_interacao){
+  #Definindo semente
+  set.seed(42)
+  #pega o número de linhas
+  length_df = nrow(df)
+  #embaralha os numeros de linhas e embaralha o banco
+  rows <- sample(length_df)
+  df = df[rows,]
+  #Cria indice pra cada linha
+  df = df %>% mutate(index_row = seq(1,length_df))
+  #define o tamanho da parte
+  size_parte = as.integer(length_df/n_cv)
+  #pega os threshold
+  partes = c(1, size_parte)
+  for (i in 2:n_cv){
+    partes[i+1] <- as.integer(size_parte*i)
+  }
+  #bota no teste os referentes da intereção n
+  test = df[partes[n_interacao]:partes[n_interacao+1],]
+  #Pega os index das linhas do teste
+  ID_test = test$index_row
+  #e filtra por aqueles que não estão no teste
+  train = df %>% filter(!index_row %in% ID_test)
+  return(list("train" = train,
+              "test" = test))
+}
+
+calc_acuracia = function(score,resp,n_cv){
+  acuracias_list = NULL
+  for (i in seq(0.01,1,0.005)){
+    conf_matrix = table(resp,score > i)
+    acuracia = round((conf_matrix[4] + conf_matrix[1])/length(resp),3)
+    acuracias_list= rbind(acuracias_list,c(acuracia, i,n_cv))
+  }
+  return(acuracias_list)
+}
+
+calc_tvp_tfp = function(score, resp, n_cv){
+  roc_table = NULL
+  for (i in seq(0,1,0.05)){
+    conf_matrix = table(resp,score > i)
+    fpr = conf_matrix[3]/(conf_matrix[1] + conf_matrix[3])
+    tpr = conf_matrix[4]/(conf_matrix[4] + conf_matrix[2])
+    roc_table = rbind(roc_table,c(fpr,tpr,n_cv))
+  }
+  colnames(roc_table) = c("fpr","tpr","n_cv")
+  return(roc_table)
+}
+
+#carragando os dados e manipulando dados - df_summary
+{path = "C:/Users/Windows 10/Desktop/ESTUDOS/data/rodrigo_derived.csv"
+df = read_csv(path, na = "-99999") 
+
+#Selecionando o intervalo de [-7,21] e variÃ¡veis
+df = df %>% 
+            dplyr::select(ID,DIM,PREFR,DDRY,NCALF,Yield,Fat,
+                          Protein,Lactose,Blood,SCC,RestTime,RestBout,
+                          RestPerBout,Activity,RumLast24, EatLast24,
+                          PL_METDIG,PL_MAST_ALL,PL_LAME_ALL,PDOPN,PTBRD,
+                          PDCC,AFCDA,PDIM, SICK_ALL) %>%
+  rename(DiasLac = DIM,
+         DiasSecos = DDRY,
+         DiasRegimeFechado = PREFR,
+         NumBezerro = NCALF,
+         ProdLeite = Yield,
+         Gordura = Fat,
+         Proteina = Protein,
+         Sangue = Blood,
+         NumCelSomaticas = SCC,
+         TempoRepouso = RestTime,
+         NumRespousos = RestBout,
+         DuracaoMediaRepouso = RestPerBout,
+         Atividade = Activity,
+         RuminacaoUltimas24h = RumLast24,
+         AlimentacaoUltimas24h = EatLast24,
+         Hist_DistDigestivo = PL_METDIG,
+         Hist_Mastite = PL_MAST_ALL,
+         Hist_Claudicacao = PL_LAME_ALL,
+         DiasNaoGravida = PDOPN,
+         NInseminada = PTBRD,
+         DuracaoGestacao = PDCC,
+         DiasPrimeiraParicao = AFCDA,
+         DuracaoLacAnterior =  PDIM)  
+         
+
+
+df$SICK_ALL = as.factor(df$SICK_ALL)
+
+ggplot(df, aes(DiasLac, ProdLeite, col = SICK_ALL)) +
+  geom_point(alpha = 0.5) +
+  scale_color_manual(values = c("lightgrey","#1f77b4"))+
+  theme_bw() +
+  ylab("Produção de Leite (gr)") +
+  xlab("Dias em Lactação") + 
+  geom_vline(xintercept = 0, col = "black", alpha = 0.3) +
+  annotate("text",x = -1, y = 75000, label = "Dia do Parto", col = "black", size = 2,angle = 90)+
+  theme(legend.position = "none") + 
+  annotate("rect", xmin = -3, xmax = 4, ymin = 0, ymax = 100000,
+        alpha = .2, fill = "green") + 
+  annotate("rect", xmin = 4, xmax = 21, ymin = 0, ymax = 100000,
+        alpha = .2, fill = "darkgrey") +
+  annotate("text",x = -1, y = 45000, label = "Período para o cálculo\ndas medidas resumos", col = "black", size = 2)+
+  annotate("text",x = 12, y = 60000, label = "Período de maior incidência\nde distúrbios de saúde", col = "black", size = 2)
+
+df_per = df %>% filter(DiasLac %in% seq(-7,21))
+df_per$ID = as.factor(df_per$ID)
+
+#new
+#Algumas temperaturas parecem estar multiplicadas por 1000
+#df_per$Media_temp_NaoAjustadaAgua_Ultimas24h[which(df_per$Media_temp_NaoAjustadaAgua_Ultimas24h  > 300)] =  #df_per$Media_temp_NaoAjustadaAgua_Ultimas24h[which(df_per$Media_temp_NaoAjustadaAgua_Ultimas24h  > 300)]/1000
+
+#df_per$Media_temp_AjustadaAgua_Ultimas24h[which(df_per$Media_temp_AjustadaAgua_Ultimas24h  > 300)] =
+#  df_per$Media_temp_AjustadaAgua_Ultimas24h[which(df_per$Media_temp_AjustadaAgua_Ultimas24h  > 300)]/1000
+
+
+#Criando variÃ¡vel get_sick
+get_sick = df_per %>%
+  filter(DiasLac %in% seq(5,21)) %>%
+  group_by(ID) %>%
+  summarise(get_sick = as.factor(max(as.double(as.character(SICK_ALL))))) %>%
+  drop_na() 
+
+#Juntando a variável get_sick ao banco
+df_per = df_per %>% left_join(get_sick) #%>% dplyr::select(-SICK_ALL) 
+
+#Colocando NA no leite antes do parto
+for (i in 6:11){
+  df_per[,i][df_per$DiasLac <= -1,] <- NA
+}
+
+#substituindo Rest igual a zero por NA
+df_per$TempoRepouso[df_per$TempoRepouso == -1] <- NA
+df_per$NumRespousos[df_per$NumRespousos == -1] <- NA
+df_per$DuracaoMediaRepouso[df_per$DuracaoMediaRepouso == -1]<- NA
+
+
+#dados resumos
+df_summary = df_per %>%
+  filter(DiasLac %in% seq(-3,4)) %>%
+  group_by(ID) %>%
+  summarise(across(where(is.double), list(mean = ~mean(.x, na.rm = TRUE)),.names = "{.col}.media")) %>%
+  left_join(get_sick) %>%
+  ungroup() %>%
+  #tirei o número de filhotes e se morreu ou não
+  dplyr::select(-c(DiasLac.media, NumBezerro.media))
+
+
+#corrigindo erros historico
+df_summary$Hist_Claudicacao.media[is.nan(df_summary$Hist_Claudicacao.media)] <- 0
+df_summary$Hist_DistDigestivo.media[is.nan(df_summary$Hist_DistDigestivo.media)] <- 0
+df_summary$Hist_Mastite.media[is.nan(df_summary$Hist_Mastite.media)] <- 0
+
+#transformando variaveis
+df_summary$Hist_Claudicacao.media = as.factor(df_summary$Hist_Claudicacao.media)
+df_summary$Hist_DistDigestivo.media  = as.factor(df_summary$Hist_DistDigestivo.media )
+df_summary$Hist_Mastite.media = as.factor(df_summary$Hist_Mastite.media)
+
+#Há vacas que não tem dados, vou subistituir pela mediana da coluna
+for (i in 3:ncol(df_summary)){
+  df_summary[,i][is.na(df_summary[,i])] <- median(as.numeric(unlist(df_summary[,i])), na.rm = T)
+}
+}
+```
+
+```{r modelagem summary}
+
+{
+  v = 10
+  area_summary = NULL
+  acuracia_summary = NULL
+  perc_doente_summary = NULL
+  score_list_summary = NULL
+  resp_list_summary = NULL
+  ID_list_summary = NULL
+  stat_vacas_summary = NULL
+  for (i in 1:v){
+    df_summary_cv = cv_split(df_summary, v, i)
+    mol_summary = glm(get_sick ~ DiasSecos.media +
+                        Gordura.media +
+                        Proteina.media +
+                        TempoRepouso.media +
+                        NumRespousos.media +
+                        RuminacaoUltimas24h.media +
+                        AlimentacaoUltimas24h.media +
+                        DiasNaoGravida.media +
+                        DuracaoLacAnterior.media,
+                        df_summary_cv$train, family = "binomial")
+    
+    perc_doente[i] = mean(as.numeric(df_summary_cv$test$doente_amanha)-1)
+    score = predict(mol_summary, newdata = df_summary_cv$test,type = "response")
+    resp = df_summary_cv$test$get_sick
+    area_summary= c(area_summary, round(auc(roc(score,resp)),3))
+    #hist(score)
+    #sep_hist <- readline(prompt="separate value: ")
+    tabela_cont = table(score > 0.2,resp)
+    acuracia__summary = c(acuracia_summary,round((tabela_cont[4] + tabela_cont[1])/length(resp),3))
+    score_list_summary = cbind(score_list_summary,score)
+    resp_list_summary = cbind(resp_list_summary, resp)
+    ID_list_summary = cbind(ID_list_summary,df_summary_cv$test$ID)
+    
+    #ID_vezesDoentes = df_gam %>% select(ID, soma_vezes_doentes_sep) %>% distinct()
+    output_mol_summary = as.data.frame(cbind(ID_list_summary[,i],score_list_summary[,i],(resp_list_summary[,i]-1), 1))
+    colnames(output_mol_summary) = c("ID","score",'resp', 'int')
+    output_mol_summary = output_mol_summary %>% mutate(pred = ifelse((score > 0.5) , 1, 0))
+    output_mol_summary = output_mol_summary %>% mutate(pred_correto = ifelse((pred == resp) , 1, 0))
+    output_mol_summary$ID = as.factor(output_mol_summary$ID)
+    #stat_vacas = as.data.frame(rbind(stat_vacas,output_mol1 %>%
+      #group_by(soma_vezes_doentes_sep) %>%
+      #summarise(acuracia = mean(pred_correto), total_obs=n(), total_animais = n()/21, int = i)))
+  }
+}
+
+summary(mol_summary)
+```
+
+```{r, fig.width=9,fig.height=4}
+#dev.off()
+rocs = NULL
+for(i in 1:v){
+  rocs = rbind(rocs,calc_tvp_tfp(score_list_summary[,i], as.factor(resp_list_summary[,i]-1),i))
+  rocs = as.data.frame(rocs)
+  rocs = rbind(rocs, c(1, 1, i))
+}
+
+AUC_summary = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
+  geom_line() +
+  geom_abline(intercept = 0, slope = 1, linetype=2) +
+  #geom_vline(xintercept = 0.1, alpha = 0.3) +
+  xlab("Taxa de falso positivo") +
+  ylab("Taxa de verdadeiro positivo") +
+  ylim(c(0,1.0))+
+  xlim(c(0,1.0))+
+  annotate(geom="text", x=0.8, y=0.3, col="#1FB477", 
+           label=paste("Média das áreas sob a curvas = ",round(mean(c(area_summary)),3))) +
+  annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório", color = "black",
+           angle = 25)+
+  theme_bw()+
+  theme(legend.position = 'none')
+
+#Acurácia
+acuracias = NULL
+for(i in 1:v){
+  acuracias = rbind(acuracias, c(0,0, i))
+  acuracias = rbind(acuracias,calc_acuracia(score_list_summary[,i], as.factor(resp_list_summary[,i]-1),i))
+  acuracias = as.data.frame(acuracias)
+  acuracias = rbind(acuracias, c(1, 1, i))
+}
+
+colnames(acuracias) = c('acuracia','corte','cv')
+
+acuracias = acuracias %>% drop_na() %>% filter(acuracia < 0.9)
+
+acuracia_summary = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) +
+  geom_line() +
+  xlab("Corte") +
+  ylab("Acurácia") +
+  ylim(c(0,1.0))+
+  xlim(c(0,1.0))+
+  theme_bw()+
+  theme(legend.position = 'none')
+
+
+AUC_summary + acuracia_summary
+```
+
+```{r df gam}
+{path = "C:/Users/Windows 10/Desktop/ESTUDOS/data/rodrigo_derived.csv"
+
+df = read_csv(path, na = "-99999") 
+
+df = df %>% 
+  dplyr::select(ID,DIM,PREFR,DDRY,NCALF,Yield,Fat,
+                Protein,Lactose,Blood,SCC,RestTime,RestBout,
+                RestPerBout,Activity,RumLast24, EatLast24,
+                PL_METDIG,PL_MAST_ALL,PL_LAME_ALL,PDOPN,PTBRD,
+                PDCC,AFCDA,PDIM, SICK_ALL) %>%
+  rename(DiasLac = DIM,
+         DiasSecos = DDRY,
+         DiasRegimeFechado = PREFR,
+         NumBezerro = NCALF,
+         ProdLeite = Yield,
+         Gordura = Fat,
+         Proteina = Protein,
+         Sangue = Blood,
+         NumCelSomaticas = SCC,
+         TempoRepouso = RestTime,
+         NumRespousos = RestBout,
+         DuracaoMediaRepouso = RestPerBout,
+         Atividade = Activity,
+         RuminacaoUltimas24h = RumLast24,
+         AlimentacaoUltimas24h = EatLast24,
+         Hist_DistDigestivo = PL_METDIG,
+         Hist_Mastite = PL_MAST_ALL,
+         Hist_Claudicacao = PL_LAME_ALL,
+         DiasNaoGravida = PDOPN,
+         NInseminada = PTBRD,
+         DuracaoGestacao = PDCC,
+         DiasPrimeiraParicao = AFCDA,
+         DuracaoLacAnterior =  PDIM)  
+
+df$SICK_ALL = as.factor(df$SICK_ALL)
+
+df_per = df %>% filter(DiasLac %in% seq(-7,21))
+df_per$ID = as.factor(df_per$ID)
+
+df_per_red = df_per %>% dplyr::select(DiasLac,ID,Gordura,Proteina, DuracaoMediaRepouso,
+                                      RuminacaoUltimas24h, AlimentacaoUltimas24h, ProdLeite,
+                                      SICK_ALL) %>%
+  filter(DiasLac %in% seq(0,20))
+
+#Proximo dia
+df_per_red = df_per_red %>%
+  group_by(ID) %>%
+  mutate(doente_amanha = dplyr::lead(SICK_ALL, n = 1, default = NA),
+         doente_ontem = dplyr::lag(SICK_ALL, default = NA),
+         ProdLeite_ontem = dplyr::lag(ProdLeite, default = NA),
+         Gordura_ontem = dplyr::lag(Gordura, default = NA),
+         RuminacaoUltimas24h_ontem = dplyr::lag(RuminacaoUltimas24h, default = NA),
+         AlimentacaoUltimas24h_ontem = dplyr::lag(AlimentacaoUltimas24h, default = NA))
+
+#Eliminando obs faltantes
+df_gam = df_per_red %>%
+  group_by(ID) %>%
+  mutate_all(funs(ifelse(is.na(.), mean(., na.rm = TRUE),.))) %>%
+  ungroup() %>%
+  mutate_all(funs(ifelse(is.na(.), median(., na.rm = TRUE),.)))
+
+#Convertando
+df_gam$doente_amanha = as.factor(df_gam$doente_amanha - 1)
+df_gam$doente_ontem = as.factor(df_gam$doente_ontem - 1)
+df_gam$SICK_ALL = as.factor(df_gam$SICK_ALL - 1)
+df_gam$ID = as.factor(df_gam$ID)
+
+#Repouso -1 = 0
+df_gam$DuracaoMediaRepouso[df_gam$DuracaoMediaRepouso <= -1] = 0
+
+df_gam = df_gam %>% rename(doente_hoje = SICK_ALL)
+
+
+#Quantidade de vezes que as vacas ficaram doentes
+df_gam %>%
+  group_by(ID) %>%
+  summarise(soma_vezes_doentes = sum(as.numeric(doente_amanha)-1)) %>%
+  ungroup() %>%
+  group_by(soma_vezes_doentes) %>%
+  tally()
+
+#Quantidade 
+df_gam = df_gam %>% 
+  group_by(ID) %>%
+  mutate(soma_vezes_doentes = sum(as.numeric(doente_amanha)-1))
+
+#Quantidade de vezes que as vacas ficaram doentes por períodos
+df_gam[df_gam$soma_vezes_doentes == 0,"soma_vezes_doentes_sep"] = '0'
+df_gam[df_gam$soma_vezes_doentes >=1 & df_gam$soma_vezes_doentes <= 5,"soma_vezes_doentes_sep"] = "1 a 5"
+df_gam[df_gam$soma_vezes_doentes >=6 & df_gam$soma_vezes_doentes <= 10,"soma_vezes_doentes_sep"] = "6 a 10"
+df_gam[df_gam$soma_vezes_doentes >=11 & df_gam$soma_vezes_doentes <= 15,"soma_vezes_doentes_sep"] = "11 a 15"
+df_gam[df_gam$soma_vezes_doentes >=16 & df_gam$soma_vezes_doentes <= 21,"soma_vezes_doentes_sep"] = "16 a 21"
+
+df_gam$soma_vezes_doentes_sep = as.character(df_gam$soma_vezes_doentes_sep)
+
+
+#ID vezes doente distinct
+ID_vezesDoentes = df_gam %>% dplyr::select(ID, soma_vezes_doentes_sep) %>% distinct()
+
+#Quantidade de vacas que ficaram doentes separado por período
+df_gam$soma_vezes_doentes_sep = factor(df_gam$soma_vezes_doentes_sep,
+                                           levels = c("0", "1 a 5", "6 a 10", "11 a 15", "16 a 21"))
+
+df_gam %>%
+  distinct(ID,.keep_all = TRUE) %>%
+  group_by(soma_vezes_doentes_sep) %>%
+  tally()
+}
+```
+
+```{r modelagem esc}
+{
+  v = 3
+  area_cv_pleno_func_ar1 = NULL
+  acuracia_cv_pleno_func_ar1 = NULL
+  perc_doente = NULL
+  score_list = NULL
+  resp_list = NULL
+  ID_list = NULL
+  stat_vacas = NULL
+  for (i in 1:v){
+    df_cv_pleno_func_ar1 = cv_pleno(df_gam, n_cv = v,n_interacao = i, "ID")
+    mol1 = gamm(doente_amanha ~ #Gordura +
+                  #Gordura_ontem +
+                  RuminacaoUltimas24h * 
+                  RuminacaoUltimas24h_ontem +
+                  AlimentacaoUltimas24h *
+                  AlimentacaoUltimas24h_ontem +
+                  doente_hoje + 
+                  ProdLeite *
+                  ProdLeite_ontem +
+                  #DuracaoMediaRepouso +
+                  #DiasNaoGravida+ 
+                  DiasLac,
+                  family="binomial",
+                data=df_cv_pleno_func_ar1$train,
+                random=list(ID=~1),
+                method = "REML")
+    
+    perc_doente[i] = mean(as.numeric(df_cv_pleno_func_ar1$test$doente_amanha)-1)
+    score = predict(mol1$gam, newdata = df_cv_pleno_func_ar1$test,type = "response")
+    resp = df_cv_pleno_func_ar1$test$doente_amanha
+    area_cv_pleno_func_ar1 = c(area_cv_pleno_func_ar1, round(auc(roc(score,resp)),3))
+    #hist(score)
+    #sep_hist <- readline(prompt="separate value: ")
+    tabela_cont = table(score > 0.2,resp)
+    acuracia_cv_pleno_func_ar1 = c(acuracia_cv_pleno_func_ar1,round((tabela_cont[4] + tabela_cont[1])/length(resp),3))
+    score_list = cbind(score_list,score)
+    resp_list = cbind(resp_list, resp)
+    ID_list = cbind(ID_list,df_cv_pleno_func_ar1$test$ID)
+    
+    ID_vezesDoentes = df_gam %>% dplyr::select(ID, soma_vezes_doentes_sep) %>% distinct()
+    output_mol1 = as.data.frame(cbind(ID_list[,i],score_list[,i],(resp_list[,i]-1), 1))
+    colnames(output_mol1) = c("ID","score",'resp', 'int')
+    output_mol1 = output_mol1 %>% mutate(pred = ifelse((score > 0.3) , 1, 0))
+    output_mol1 = output_mol1 %>% mutate(pred_correto = ifelse((pred == resp) , 1, 0))
+    output_mol1$ID = as.factor(output_mol1$ID)
+    output_mol1 = output_mol1 %>% inner_join(ID_vezesDoentes)
+    stat_vacas = as.data.frame(rbind(stat_vacas,output_mol1 %>%
+      group_by(soma_vezes_doentes_sep) %>%
+      summarise(acuracia = mean(pred_correto), total_obs=n(), total_animais = n()/21, int = i)))
+  }
+}
+
+
+#table(output_mol1$soma_vezes_doentes_sep, output_mol1$sum_pred)
+
+#output_mol1_distinct = output_mol1 %>%
+#  dplyr::select(ID, soma_vezes_doentes, sum_pred) %>%
+#  distinct()
+
+#vzsDoentes_vzsPred = table(output_mol1_distinct$soma_vezes_doentes, output_mol1_distinct$sum_pred)
+
+
+#9-10% das observações são doentes
+perc_doente
+mean(perc_doente)
+
+
+summary(mol1$gam)
+plot(mol1$gam)
+```
+
+
+```{r AUC e acurácia esc, fig.width=9,fig.height=4}
+#ROC curve
+rocs = NULL
+for(i in 1:v){
+  rocs = rbind(rocs,calc_tvp_tfp(score_list[,i], as.factor(resp_list[,i]-1),i))
+  rocs = as.data.frame(rocs)
+  rocs = rbind(rocs, c(1, 1, i))
+}
+
+AUC_pleno = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
+  geom_line() +
+  geom_abline(intercept = 0, slope = 1, linetype=2) +
+  #geom_vline(xintercept = 0.1, alpha = 0.3) +
+  xlab("Taxa de falso positivo") +
+  ylab("Taxa de verdadeiro positivo") +
+  ylim(c(0,1.0))+
+  xlim(c(0,1.0))+
+  annotate(geom="text", x=0.7, y=0.3, col="#1FB477", 
+           label=paste("Média das áreas sob a curvas = ",round(mean(c(area_cv_pleno_func_ar1)),3))) +
+  annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório", color = "black",
+           angle = 33)+
+  theme_bw()+
+  theme(legend.position = 'none')
+
+#Acurácia
+acuracias = NULL
+for(i in 1:v){
+  acuracias = rbind(acuracias, c(0,0, i))
+  acuracias = rbind(acuracias,calc_acuracia(score_list[,i], as.factor(resp_list[,i]-1),i))
+  acuracias = as.data.frame(acuracias)
+  acuracias = rbind(acuracias, c(1, 1, i))
+}
+
+colnames(acuracias) = c('acuracia','corte','cv')
+
+acuracia_pleno = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) +
+  geom_line() +
+  xlab("Corte") +
+  ylab("Acurácia") +
+  ylim(c(0,1.0))+
+  xlim(c(0,1.0))+
+  theme_bw()+
+  theme(legend.position = 'none')
+
+
+AUC_pleno + acuracia_pleno
+```
+
+```{r modelagem}
+{
+  v = 10
+  area_cv_pleno_func_ar1 = NULL
+  acuracia_cv_pleno_func_ar1 = NULL
+  perc_doente = NULL
+  score_list = NULL
+  resp_list = NULL
+  ID_list = NULL
+  stat_vacas = NULL
+  for (i in 1:v){
+    df_cv_pleno_func_ar1 = cv_pleno(df_gam, n_cv = v,n_interacao = i, "ID")
+    mol1 = gamm(doente_amanha ~ #Gordura +
+                  #Gordura_ontem +
+                  RuminacaoUltimas24h * 
+                  RuminacaoUltimas24h_ontem +
+                  AlimentacaoUltimas24h *
+                  AlimentacaoUltimas24h_ontem +
+                  doente_hoje + 
+                  ProdLeite *
+                  ProdLeite_ontem +
+                  #DuracaoMediaRepouso +
+                  #DiasNaoGravida+ 
+                  s(DiasLac, bs = 'cr'),
+                  family="binomial",
+                data=df_cv_pleno_func_ar1$train,
+                random=list(ID=~1),
+                method = "REML")
+    
+    perc_doente[i] = mean(as.numeric(df_cv_pleno_func_ar1$test$doente_amanha)-1)
+    score = predict(mol1$gam, newdata = df_cv_pleno_func_ar1$test,type = "response")
+    resp = df_cv_pleno_func_ar1$test$doente_amanha
+    area_cv_pleno_func_ar1 = c(area_cv_pleno_func_ar1, round(auc(roc(score,resp)),3))
+    #hist(score)
+    #sep_hist <- readline(prompt="separate value: ")
+    tabela_cont = table(score > 0.2,resp)
+    acuracia_cv_pleno_func_ar1 = c(acuracia_cv_pleno_func_ar1,round((tabela_cont[4] + tabela_cont[1])/length(resp),3))
+    score_list = cbind(score_list,score)
+    resp_list = cbind(resp_list, resp)
+    ID_list = cbind(ID_list,df_cv_pleno_func_ar1$test$ID)
+    
+    ID_vezesDoentes = df_gam %>% dplyr::select(ID, soma_vezes_doentes_sep) %>% distinct()
+    output_mol1 = as.data.frame(cbind(ID_list[,i],score_list[,i],(resp_list[,i]-1), 1))
+    colnames(output_mol1) = c("ID","score",'resp', 'int')
+    output_mol1 = output_mol1 %>% mutate(pred = ifelse((score > 0.3) , 1, 0))
+    output_mol1 = output_mol1 %>% mutate(pred_correto = ifelse((pred == resp) , 1, 0))
+    output_mol1$ID = as.factor(output_mol1$ID)
+    output_mol1 = output_mol1 %>% inner_join(ID_vezesDoentes)
+    stat_vacas = as.data.frame(rbind(stat_vacas,output_mol1 %>%
+      group_by(soma_vezes_doentes_sep) %>%
+      summarise(acuracia = mean(pred_correto), total_obs=n(), total_animais = n()/21, int = i)))
+  }
+}
+
+
+#table(output_mol1$soma_vezes_doentes_sep, output_mol1$sum_pred)
+
+#output_mol1_distinct = output_mol1 %>%
+#  dplyr::select(ID, soma_vezes_doentes, sum_pred) %>%
+#  distinct()
+
+#vzsDoentes_vzsPred = table(output_mol1_distinct$soma_vezes_doentes, output_mol1_distinct$sum_pred)
+
+
+#9-10% das observações são doentes
+perc_doente
+mean(perc_doente)
+
+
+summary(mol1$gam)
+plot(mol1$gam)
+```
+
+```{r plot intervalo, fig.width=9,fig.height=4}
+#gráfico da acurácia entre os diferentes intervalos
+arrows <-
+  tibble(
+    x1 = c(1),
+    x2 = c(1.5),
+    y1 = c(1),
+    y2 = c(0.7)
+  )
+
+stat_vacas$soma_vezes_doentes_sep = factor(stat_vacas$soma_vezes_doentes_sep,
+                                           levels = c("0", "1 a 5", "6 a 10", "11 a 15", "16 a 21"))
+
+tabela_vacas = stat_vacas %>%
+  group_by(soma_vezes_doentes_sep) %>%
+  summarise(media_de_observacoes = round(mean(total_obs)))
+
+rownames(tabela_vacas) = NULL
+
+colnames(tabela_vacas) = c('Intervalos', 'Média de n.º observações')
+
+acuracia_t = NULL
+for (t in 1:v){
+  conf_matrix1 = table(resp_list[,t],score_list[,t] > 0.2)
+  acuracia_t[t] = round((conf_matrix1[4] + conf_matrix1[1])/length(resp_list[,1]),3)
+}
+
+#acuracia_t
+#mean(acuracia_t) #0.9473
+
+acuracias_intervalo  = stat_vacas %>% 
+  ggplot(aes(soma_vezes_doentes_sep, acuracia, color = soma_vezes_doentes_sep))+
+  #geom_boxplot(color = "gray60", outlier.alpha = 0)+
+  geom_point(size = 3, alpha = 0.25)+
+  geom_hline(aes(yintercept = 0.9473), color = "gray70", size = 0.6) +
+  stat_summary(fun = mean, geom = "point", size = 5)+
+  geom_curve(
+    data = arrows, aes(x = x1, y = y1, xend = x2, yend = y2),
+    arrow = arrow(length = unit(0.07, "inch")), size = 0.4,
+    color = "gray20", curvature = -0.3
+  )+
+  annotate(geom = "text", x = 4, y = 0.975,
+           label = "Média das acurácias das validações cruzadas = 0.947",
+           color = "black", size = 3)+
+  annotate(geom = "text", x = 1.5, y = 0.60,
+           label = "Como a maioria das observações são 'Não Doentes',\neste intervalo tem mais influência que os outros na\nmédia da acurácia.",
+           color = "black", size = 3)+
+  xlab("Intervalo de vezes que o animal ficou doente entre o parto e 20 dias após o parto")+
+  ylab("Acurácia")+
+  ylim(c(0,1))+
+  annotate(geom = "table", x = 3.8, y = 0.39, label = list(tabela_vacas), 
+           vjust = 1, hjust = 0) +
+  theme_bw()+
+  theme(legend.position = 'none')
+
+acuracias_intervalo
+```
+
+
+```{r AUC e acurácia, fig.width=9,fig.height=4}
+#ROC curve
+rocs = NULL
+for(i in 1:v){
+  rocs = rbind(rocs,calc_tvp_tfp(score_list[,i], as.factor(resp_list[,i]-1),i))
+  rocs = as.data.frame(rocs)
+  rocs = rbind(rocs, c(1, 1, i))
+}
+
+AUC_pleno = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
+  geom_line() +
+  geom_abline(intercept = 0, slope = 1, linetype=2) +
+  #geom_vline(xintercept = 0.1, alpha = 0.3) +
+  xlab("Taxa de falso positivo") +
+  ylab("Taxa de verdadeiro positivo") +
+  ylim(c(0,1.0))+
+  xlim(c(0,1.0))+
+  annotate(geom="text", x=0.7, y=0.3, col="#1FB477", 
+           label=paste("Média das áreas sob a curvas = ",round(mean(c(area_cv_pleno_func_ar1)),3))) +
+  annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório", color = "black",
+           angle = 33)+
+  theme_bw()+
+  theme(legend.position = 'none')
+
+#Acurácia
+acuracias = NULL
+for(i in 1:v){
+  acuracias = rbind(acuracias, c(0,0, i))
+  acuracias = rbind(acuracias,calc_acuracia(score_list[,i], as.factor(resp_list[,i]-1),i))
+  acuracias = as.data.frame(acuracias)
+  acuracias = rbind(acuracias, c(1, 1, i))
+}
+
+colnames(acuracias) = c('acuracia','corte','cv')
+
+acuracia_pleno = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) +
+  geom_line() +
+  xlab("Corte") +
+  ylab("Acurácia") +
+  ylim(c(0,1.0))+
+  xlim(c(0,1.0))+
+  theme_bw()+
+  theme(legend.position = 'none')
+
+
+AUC_pleno + acuracia_pleno
+```
+
