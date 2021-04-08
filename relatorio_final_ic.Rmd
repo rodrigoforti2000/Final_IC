@@ -2,7 +2,7 @@
 output: 
   pdf_document:
     fig_crop: no
-#bibliography: "referencias.bib"
+bibliography: "referencias.bib"
 nocite: '@*'
 link-citations: true
 colorlinks: false
@@ -222,6 +222,7 @@ Além disso, o conjunto de dados apresentou diversos dados faltantes. Para conto
 
 Foram utilizadas duas abordagens  para resolver o problema de classificação. A primeira faz ajuste de um modelo a partir de uma única observação do estado de saúde do animal, como descrito na Seção 3.1. A segunda faz o ajuste de um modelo considerando medidas repetidas de cada animal, como descrito na Seção 3.2.
 
+
 ```{r pacotes e funcoes}
 library(tidyverse)
 library(MASS)
@@ -423,13 +424,14 @@ for (i in 3:ncol(df_summary)){
 }
 ```
 
+
 ```{r modelagem summary}
 
 {
   v = 10
   area_summary = NULL
   acuracia_summary = NULL
-  perc_doente_summary = NULL
+  #perc_doente_summary = NULL
   score_list_summary = NULL
   resp_list_summary = NULL
   ID_list_summary = NULL
@@ -447,7 +449,7 @@ for (i in 3:ncol(df_summary)){
                         DuracaoLacAnterior.media,
                         df_summary_cv$train, family = "binomial")
     
-    perc_doente[i] = mean(as.numeric(df_summary_cv$test$doente_amanha)-1)
+    #perc_doente_summary[i] = mean(as.numeric(df_summary_cv$test$doente_amanha)-1)
     score = predict(mol_summary, newdata = df_summary_cv$test,type = "response")
     resp = df_summary_cv$test$get_sick
     area_summary= c(area_summary, round(auc(roc(score,resp)),3))
@@ -471,10 +473,10 @@ for (i in 3:ncol(df_summary)){
   }
 }
 
-summary(mol_summary)
 ```
 
-```{r, fig.width=9,fig.height=4}
+
+```{r, fig.width=9,fig.height=4, fig.cap="Curvas ROC e acurácias do modelo sem medidas repetidas alcançado por stepwise obtidas por meio de validação cruzada."}
 #dev.off()
 rocs = NULL
 for(i in 1:v){
@@ -491,10 +493,10 @@ AUC_summary = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
   ylab("Taxa de verdadeiro positivo") +
   ylim(c(0,1.0))+
   xlim(c(0,1.0))+
-  annotate(geom="text", x=0.8, y=0.3, col="#1FB477", 
+  annotate(geom="text", x=0.6, y=0.1, col="#1FB477", 
            label=paste("Média das áreas sob a curvas = ",round(mean(c(area_summary)),3))) +
   annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório", color = "black",
-           angle = 25)+
+           angle = 40)+
   theme_bw()+
   theme(legend.position = 'none')
 
@@ -504,7 +506,8 @@ for(i in 1:v){
   acuracias = rbind(acuracias, c(0,0, i))
   acuracias = rbind(acuracias,calc_acuracia(score_list_summary[,i], as.factor(resp_list_summary[,i]-1),i))
   acuracias = as.data.frame(acuracias)
-  acuracias = rbind(acuracias, c(1, 1, i))
+  acuracias = acuracias %>% drop_na()
+  acuracias = rbind(acuracias, c((acuracias %>% dplyr::select(V1) %>% tail(1) %>% as.numeric()),1, i))
 }
 
 colnames(acuracias) = c('acuracia','corte','cv')
@@ -524,8 +527,30 @@ acuracia_summary = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))
 AUC_summary + acuracia_summary
 ```
 
+
+```{r tabela summary}
+mol_summary = glm(get_sick ~ DiasSecos.media +
+                        Gordura.media +
+                        Proteina.media +
+                        TempoRepouso.media +
+                        NumRespousos.media +
+                        RuminacaoUltimas24h.media +
+                        AlimentacaoUltimas24h.media +
+                        DiasNaoGravida.media +
+                        DuracaoLacAnterior.media,
+                        df_summary, family = "binomial")
+
+broom::tidy(mol_summary) %>% mutate_if(is.numeric, round, 3) %>%
+  mutate(term=replace(term, term=="(Intercept)", "Intercepto")) %>%
+  mutate(p.value=replace(p.value, p.value < 0.05, "<0,05")) %>%
+  kable(caption = "Resultados do ajuste do modelo sem medidas repetidas obtido por stepwise.", col.names = c("Termo","Estimativa","Erro padrão","Estatística do teste","P-valor")) %>%
+  kable_styling(position = "center",latex_options = "HOLD_position")
+```
+
+
 ```{r df gam}
-{path = "C:/Users/Windows 10/Desktop/ESTUDOS/data/rodrigo_derived.csv"
+{
+  path = "C:/Users/Windows 10/Desktop/ESTUDOS/data/rodrigo_derived.csv"
 
 df = read_csv(path, na = "-99999") 
 
@@ -599,12 +624,12 @@ df_gam = df_gam %>% rename(doente_hoje = SICK_ALL)
 
 
 #Quantidade de vezes que as vacas ficaram doentes
-df_gam %>%
-  group_by(ID) %>%
-  summarise(soma_vezes_doentes = sum(as.numeric(doente_amanha)-1)) %>%
-  ungroup() %>%
-  group_by(soma_vezes_doentes) %>%
-  tally()
+#df_gam %>%
+#  group_by(ID) %>%
+#  summarise(soma_vezes_doentes = sum(as.numeric(doente_amanha)-1)) %>%
+#  ungroup() %>%
+#  group_by(soma_vezes_doentes) %>%
+#  tally()
 
 #Quantidade 
 df_gam = df_gam %>% 
@@ -616,7 +641,7 @@ df_gam[df_gam$soma_vezes_doentes == 0,"soma_vezes_doentes_sep"] = '0'
 df_gam[df_gam$soma_vezes_doentes >=1 & df_gam$soma_vezes_doentes <= 5,"soma_vezes_doentes_sep"] = "1 a 5"
 df_gam[df_gam$soma_vezes_doentes >=6 & df_gam$soma_vezes_doentes <= 10,"soma_vezes_doentes_sep"] = "6 a 10"
 df_gam[df_gam$soma_vezes_doentes >=11 & df_gam$soma_vezes_doentes <= 15,"soma_vezes_doentes_sep"] = "11 a 15"
-df_gam[df_gam$soma_vezes_doentes >=16 & df_gam$soma_vezes_doentes <= 21,"soma_vezes_doentes_sep"] = "16 a 21"
+df_gam[df_gam$soma_vezes_doentes >=16 & df_gam$soma_vezes_doentes <= 21,"soma_vezes_doentes_sep"] = "> 15"
 
 df_gam$soma_vezes_doentes_sep = as.character(df_gam$soma_vezes_doentes_sep)
 
@@ -626,21 +651,21 @@ ID_vezesDoentes = df_gam %>% dplyr::select(ID, soma_vezes_doentes_sep) %>% disti
 
 #Quantidade de vacas que ficaram doentes separado por período
 df_gam$soma_vezes_doentes_sep = factor(df_gam$soma_vezes_doentes_sep,
-                                           levels = c("0", "1 a 5", "6 a 10", "11 a 15", "16 a 21"))
+                                           levels = c("0", "1 a 5", "6 a 10", "11 a 15", "> 15"))
 
-df_gam %>%
-  distinct(ID,.keep_all = TRUE) %>%
-  group_by(soma_vezes_doentes_sep) %>%
-  tally()
+#df_gam %>%
+#  distinct(ID,.keep_all = TRUE) %>%
+#  group_by(soma_vezes_doentes_sep) %>%
+#  tally()
 }
 ```
 
-```{r modelagem esc}
+```{r modelagem esc,results='hide',comment=NA}
 {
   v = 3
   area_cv_pleno_func_ar1 = NULL
   acuracia_cv_pleno_func_ar1 = NULL
-  perc_doente = NULL
+  #perc_doente = NULL
   score_list = NULL
   resp_list = NULL
   ID_list = NULL
@@ -653,7 +678,8 @@ df_gam %>%
                   RuminacaoUltimas24h_ontem +
                   AlimentacaoUltimas24h *
                   AlimentacaoUltimas24h_ontem +
-                  doente_hoje + 
+                  doente_hoje * 
+                  doente_ontem +
                   ProdLeite *
                   ProdLeite_ontem +
                   #DuracaoMediaRepouso +
@@ -664,7 +690,7 @@ df_gam %>%
                 random=list(ID=~1),
                 method = "REML")
     
-    perc_doente[i] = mean(as.numeric(df_cv_pleno_func_ar1$test$doente_amanha)-1)
+    #perc_doente[i] = mean(as.numeric(df_cv_pleno_func_ar1$test$doente_amanha)-1)
     score = predict(mol1$gam, newdata = df_cv_pleno_func_ar1$test,type = "response")
     resp = df_cv_pleno_func_ar1$test$doente_amanha
     area_cv_pleno_func_ar1 = c(area_cv_pleno_func_ar1, round(auc(roc(score,resp)),3))
@@ -700,16 +726,15 @@ df_gam %>%
 
 
 #9-10% das observações são doentes
-perc_doente
-mean(perc_doente)
+#perc_doente
+#mean(perc_doente)
 
 
-summary(mol1$gam)
-plot(mol1$gam)
+#summary(mol1$gam)
 ```
 
 
-```{r AUC e acurácia esc, fig.width=9,fig.height=4}
+```{r AUC e acurácia esc, fig.width=9,fig.height=4,fig.cap="Curvas ROC e acurácias do modelo misto escalar obtidas por meio de validação cruzada."}
 #ROC curve
 rocs = NULL
 for(i in 1:v){
@@ -726,10 +751,11 @@ AUC_pleno = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
   ylab("Taxa de verdadeiro positivo") +
   ylim(c(0,1.0))+
   xlim(c(0,1.0))+
-  annotate(geom="text", x=0.7, y=0.3, col="#1FB477", 
+  annotate(geom="text", x=0.6, y=0.1, col="#1FB477", 
            label=paste("Média das áreas sob a curvas = ",round(mean(c(area_cv_pleno_func_ar1)),3))) +
-  annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório", color = "black",
-           angle = 33)+
+  annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório",
+           color = "black",
+           angle = 40)+
   theme_bw()+
   theme(legend.position = 'none')
 
@@ -739,7 +765,9 @@ for(i in 1:v){
   acuracias = rbind(acuracias, c(0,0, i))
   acuracias = rbind(acuracias,calc_acuracia(score_list[,i], as.factor(resp_list[,i]-1),i))
   acuracias = as.data.frame(acuracias)
-  acuracias = rbind(acuracias, c(1, 1, i))
+  #acuracias = rbind(acuracias, c(1, 1, i))
+  acuracias = acuracias %>% drop_na()
+  acuracias = rbind(acuracias, c((acuracias %>% dplyr::select(V1) %>% tail(1) %>% as.numeric()),1, i))
 }
 
 colnames(acuracias) = c('acuracia','corte','cv')
@@ -757,12 +785,48 @@ acuracia_pleno = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) 
 AUC_pleno + acuracia_pleno
 ```
 
-```{r modelagem}
+
+```{r ajuste esc,comment=NA}
+#Ctrl + shift + C
+# mol1 = gamm(doente_amanha ~ #Gordura +
+#                   #Gordura_ontem +
+#                   RuminacaoUltimas24h * 
+#                   RuminacaoUltimas24h_ontem +
+#                   AlimentacaoUltimas24h *
+#                   AlimentacaoUltimas24h_ontem +
+#                   doente_hoje * 
+#                   doente_ontem + 
+#                   ProdLeite *
+#                   ProdLeite_ontem +
+#                   #DuracaoMediaRepouso +
+#                   #DiasNaoGravida+ 
+#                   DiasLac,
+#                   family="binomial",
+#                 data=df_gam,
+#                 random=list(ID=~1),
+#                 method = "REML")
+# 
+# mol1_gam = summary.gam(mol1$gam)
+# 
+# kable(as.data.frame(mol1_gam$p.table) %>% tibble::rownames_to_column("term") %>%
+#         mutate_if(is.numeric, round, 3) %>%
+#         mutate(term=replace(term, term == "(Intercept)", "Intercepto")) %>%
+#         mutate(term=replace(term, term == "SICK_ALL1", "Doente_Ontem")) %>%
+#         mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` < 0.001, "<0,001"))%>%
+#         mutate(Estimate=replace(Estimate, Estimate < 0.001, "<0,001")) %>%
+#         mutate(`Std. Error`=replace(`Std. Error`, `Std. Error` < 0.001, "<0,001")),
+#         caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar.",
+#         col.names = c("Termo","Estimativa","Erro padrão","Estatística do teste","P-valor"))  %>%
+#   kable_styling(font_size = 10, latex_options = "HOLD_position")
+```
+
+
+```{r modelagem,results='hide',comment=NA}
 {
-  v = 10
+  v = 3
   area_cv_pleno_func_ar1 = NULL
   acuracia_cv_pleno_func_ar1 = NULL
-  perc_doente = NULL
+  #perc_doente = NULL
   score_list = NULL
   resp_list = NULL
   ID_list = NULL
@@ -775,7 +839,8 @@ AUC_pleno + acuracia_pleno
                   RuminacaoUltimas24h_ontem +
                   AlimentacaoUltimas24h *
                   AlimentacaoUltimas24h_ontem +
-                  doente_hoje + 
+                  doente_hoje * 
+                  doente_ontem + 
                   ProdLeite *
                   ProdLeite_ontem +
                   #DuracaoMediaRepouso +
@@ -786,7 +851,7 @@ AUC_pleno + acuracia_pleno
                 random=list(ID=~1),
                 method = "REML")
     
-    perc_doente[i] = mean(as.numeric(df_cv_pleno_func_ar1$test$doente_amanha)-1)
+    #perc_doente[i] = mean(as.numeric(df_cv_pleno_func_ar1$test$doente_amanha)-1)
     score = predict(mol1$gam, newdata = df_cv_pleno_func_ar1$test,type = "response")
     resp = df_cv_pleno_func_ar1$test$doente_amanha
     area_cv_pleno_func_ar1 = c(area_cv_pleno_func_ar1, round(auc(roc(score,resp)),3))
@@ -822,15 +887,122 @@ AUC_pleno + acuracia_pleno
 
 
 #9-10% das observações são doentes
-perc_doente
-mean(perc_doente)
+#perc_doente
+#mean(perc_doente)
 
 
-summary(mol1$gam)
+#summary(mol1$gam)
+```
+
+
+```{r AUC e acurácia, fig.width=9,fig.height=4,fig.cap="Curvas ROC e acurácias do modelo misto escalar-funcional obtidas por meio de validação cruzada."}
+#ROC curve
+rocs = NULL
+for(i in 1:v){
+  rocs = rbind(rocs,calc_tvp_tfp(score_list[,i], as.factor(resp_list[,i]-1),i))
+  rocs = as.data.frame(rocs)
+  rocs = rbind(rocs, c(1, 1, i))
+}
+
+AUC_pleno = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
+  geom_line() +
+  geom_abline(intercept = 0, slope = 1, linetype=2) +
+  #geom_vline(xintercept = 0.1, alpha = 0.3) +
+  xlab("Taxa de falso positivo") +
+  ylab("Taxa de verdadeiro positivo") +
+  ylim(c(0,1.0))+
+  xlim(c(0,1.0))+
+  annotate(geom="text", x=0.6, y=0.1, col="#1FB477", 
+           label=paste("Média das áreas sob a curvas = ",round(mean(c(area_cv_pleno_func_ar1)),3))) +
+  annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório",
+           color = "black",
+           angle = 40)+
+  theme_bw()+
+  theme(legend.position = 'none')
+
+#Acurácia
+acuracias = NULL
+for(i in 1:v){
+  acuracias = rbind(acuracias, c(0,0, i))
+  acuracias = rbind(acuracias,calc_acuracia(score_list[,i], as.factor(resp_list[,i]-1),i))
+  acuracias = as.data.frame(acuracias)
+  #acuracias = rbind(acuracias, c(1, 1, i))
+  acuracias = acuracias %>% drop_na()
+  acuracias = rbind(acuracias, c((acuracias %>% dplyr::select(V1) %>% tail(1) %>% as.numeric()),1, i))
+}
+
+colnames(acuracias) = c('acuracia','corte','cv')
+
+acuracia_pleno = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) +
+  geom_line() +
+  xlab("Corte") +
+  ylab("Acurácia") +
+  ylim(c(0,1.0))+
+  xlim(c(0,1.0))+
+  theme_bw()+
+  theme(legend.position = 'none')
+
+
+AUC_pleno + acuracia_pleno
+```
+
+
+
+```{r ajuste esc fun,results='hide', comment = NA}
+mol1 = gamm(doente_amanha ~ #Gordura +
+                  #Gordura_ontem +
+                  RuminacaoUltimas24h * 
+                  RuminacaoUltimas24h_ontem +
+                  AlimentacaoUltimas24h *
+                  AlimentacaoUltimas24h_ontem +
+                  doente_hoje * 
+                  doente_ontem +
+                  ProdLeite +
+                  ProdLeite_ontem +
+                  #DuracaoMediaRepouso +
+                  #DiasNaoGravida+ 
+                  s(DiasLac, bs = 'cr'),
+                  family="binomial",
+                data=df_gam,
+                random=list(ID=~1),
+                method = "REML")
+
+
+```
+
+
+```{r esc fun table}
+mol1_gam = summary.gam(mol1$gam)
+
+kable(as.data.frame(mol1_gam$p.table) %>% tibble::rownames_to_column("term") %>%
+        mutate_if(is.numeric, round, 3) %>%
+        mutate(term=replace(term, term == "(Intercept)", "Intercepto")) %>%
+        mutate(term=replace(term, term == "SICK_ALL1", "Doente_Ontem")) %>%
+        mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` < 0.001, "<0,001")) %>%
+        mutate(Estimate=replace(Estimate, Estimate < 0.001 & Estimate >= 0, "<0,001")) %>%
+        mutate(Estimate=replace(Estimate, Estimate > -0.001 & Estimate <= 0, ">-0,001")) %>%
+        mutate(`Std. Error`=replace(`Std. Error`, `Std. Error` < 0.001, "<0,001"))
+        ,
+        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional.",
+        col.names = c("Termo","Estimativa","Erro padrão","Estatística do teste","P-valor"))  %>%
+  kable_styling(font_size = 10, latex_options = "HOLD_position")
+```
+
+```{r lac plot, fig.cap="Curva estimada de dia de lactação (DiasLac)"}
 plot(mol1$gam)
 ```
 
-```{r plot intervalo, fig.width=9,fig.height=4}
+```{r lac table}
+kable(as.data.frame(broom::tidy(mol1$gam) %>% mutate_if(is.numeric, round, 3) %>%
+                      dplyr::select(-ref.df) %>%
+                      mutate(p.value=replace(p.value, p.value < 0.001, "<0,001"))),
+                    caption = "P-valor do efeito da função de suavização s(DiasLac) no modelo misto escalar-funcional. GLE é referente aos graus de liberdade efetivos.",
+      col.names = c("Termo","GLE","Estatística do teste","P-valor"))  %>%
+  kable_styling(font_size = 10, latex_options = "HOLD_position")
+```
+
+
+```{r plot intervalo, fig.width=9,fig.height=4, fig.cap="Acurácia em intervalos de quantas vezes as vacas do conjunto de teste ficaram doentes entre o dia do parto e os 20 dias posteriores, obtida pela validação cruzada."}
 #gráfico da acurácia entre os diferentes intervalos
 arrows <-
   tibble(
@@ -841,7 +1013,7 @@ arrows <-
   )
 
 stat_vacas$soma_vezes_doentes_sep = factor(stat_vacas$soma_vezes_doentes_sep,
-                                           levels = c("0", "1 a 5", "6 a 10", "11 a 15", "16 a 21"))
+                                           levels = c("0", "1 a 5", "6 a 10", "11 a 15", "> 15"))
 
 tabela_vacas = stat_vacas %>%
   group_by(soma_vezes_doentes_sep) %>%
@@ -887,53 +1059,3 @@ acuracias_intervalo  = stat_vacas %>%
 
 acuracias_intervalo
 ```
-
-
-```{r AUC e acurácia, fig.width=9,fig.height=4}
-#ROC curve
-rocs = NULL
-for(i in 1:v){
-  rocs = rbind(rocs,calc_tvp_tfp(score_list[,i], as.factor(resp_list[,i]-1),i))
-  rocs = as.data.frame(rocs)
-  rocs = rbind(rocs, c(1, 1, i))
-}
-
-AUC_pleno = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
-  geom_line() +
-  geom_abline(intercept = 0, slope = 1, linetype=2) +
-  #geom_vline(xintercept = 0.1, alpha = 0.3) +
-  xlab("Taxa de falso positivo") +
-  ylab("Taxa de verdadeiro positivo") +
-  ylim(c(0,1.0))+
-  xlim(c(0,1.0))+
-  annotate(geom="text", x=0.7, y=0.3, col="#1FB477", 
-           label=paste("Média das áreas sob a curvas = ",round(mean(c(area_cv_pleno_func_ar1)),3))) +
-  annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório", color = "black",
-           angle = 33)+
-  theme_bw()+
-  theme(legend.position = 'none')
-
-#Acurácia
-acuracias = NULL
-for(i in 1:v){
-  acuracias = rbind(acuracias, c(0,0, i))
-  acuracias = rbind(acuracias,calc_acuracia(score_list[,i], as.factor(resp_list[,i]-1),i))
-  acuracias = as.data.frame(acuracias)
-  acuracias = rbind(acuracias, c(1, 1, i))
-}
-
-colnames(acuracias) = c('acuracia','corte','cv')
-
-acuracia_pleno = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) +
-  geom_line() +
-  xlab("Corte") +
-  ylab("Acurácia") +
-  ylim(c(0,1.0))+
-  xlim(c(0,1.0))+
-  theme_bw()+
-  theme(legend.position = 'none')
-
-
-AUC_pleno + acuracia_pleno
-```
-
