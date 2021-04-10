@@ -236,6 +236,7 @@ O conjunto de dados utilizado para este trabalho apresenta 71 observações para
 
 Além disso, o conjunto de dados apresentou diversos dados faltantes. Para contornar esse problema tomou-se o seguinte procedimento: se o animal apresentou poucos dados faltantes para uma variável, esses seriam substituídos pela média daquela variável ao longo das medidas repetidas do animal. Para o animal sem nenhuma informação numa determinada variável, o valor imputado foi a mediana da variável para as vacas com informação
 
+\newpage
 
 # 4 Resultados
 
@@ -331,7 +332,10 @@ calc_tvp_tfp = function(score, resp, n_cv){
   colnames(roc_table) = c("fpr","tpr","n_cv")
   return(roc_table)
 }
+```
 
+
+```{r dados summary}
 #carragando os dados e manipulando dados - df_summary
 {path = "C:/Users/Windows 10/Desktop/ESTUDOS/data/rodrigo_derived.csv"
 df = read_csv(path, na = "-99999") 
@@ -347,7 +351,7 @@ df = df %>%
          DiasSecos = DDRY,
          DiasRegimeFechado = PREFR,
          NumBezerro = NCALF,
-         ProdLeite = Yield,
+         ProdLeite_k1 = Yield,
          Gordura = Fat,
          Proteina = Protein,
          Sangue = Blood,
@@ -356,8 +360,8 @@ df = df %>%
          NumRespousos = RestBout,
          DuracaoMediaRepouso = RestPerBout,
          Atividade = Activity,
-         RuminacaoUltimas24h = RumLast24,
-         AlimentacaoUltimas24h = EatLast24,
+         RuminacaoUltimas24h_k1 = RumLast24,
+         AlimentacaoUltimas24h_k1 = EatLast24,
          Hist_DistDigestivo = PL_METDIG,
          Hist_Mastite = PL_MAST_ALL,
          Hist_Claudicacao = PL_LAME_ALL,
@@ -371,7 +375,7 @@ df = df %>%
 
 df$SICK_ALL = as.factor(df$SICK_ALL)
 
-# ggplot(df, aes(DiasLac, ProdLeite, col = SICK_ALL)) +
+# ggplot(df, aes(DiasLac, ProdLeite_k1, col = SICK_ALL)) +
 #   geom_point(alpha = 0.5) +
 #   scale_color_manual(values = c("lightgrey","#1f77b4"))+
 #   theme_bw() +
@@ -448,8 +452,9 @@ for (i in 3:ncol(df_summary)){
 ```
 
 
+
 ```{r, fig.cap = "Produção de leite entre os dias em torno do parto. A cor azul indica distúrbio de saúde e o cinza, estado saudável."}
-ggplot(df, aes(DiasLac, ProdLeite, col = SICK_ALL)) +
+ggplot(df, aes(DiasLac, ProdLeite_k1, col = SICK_ALL)) +
   geom_point(alpha = 0.5) +
   scale_color_manual(values = c("lightgrey","#1f77b4"))+
   theme_bw() +
@@ -496,8 +501,8 @@ Podemos ver que pela Figura 3 que o modelo tem uma acurácia em média de 62,5% 
                         Proteina.media +
                         TempoRepouso.media +
                         NumRespousos.media +
-                        RuminacaoUltimas24h.media +
-                        AlimentacaoUltimas24h.media +
+                        RuminacaoUltimas24h_k1.media +
+                        AlimentacaoUltimas24h_k1.media +
                         DiasNaoGravida.media +
                         DuracaoLacAnterior.media,
                         df_summary_cv$train, family = "binomial")
@@ -588,14 +593,16 @@ mol_summary = glm(get_sick ~ DiasSecos.media +
                         Proteina.media +
                         TempoRepouso.media +
                         NumRespousos.media +
-                        RuminacaoUltimas24h.media +
-                        AlimentacaoUltimas24h.media +
+                        RuminacaoUltimas24h_k1.media +
+                        AlimentacaoUltimas24h_k1.media +
                         DiasNaoGravida.media +
                         DuracaoLacAnterior.media,
                         df_summary, family = "binomial")
 
 broom::tidy(mol_summary) %>% mutate_if(is.numeric, round, 3) %>%
   mutate(term=replace(term, term=="(Intercept)", "Intercepto")) %>%
+  mutate(term=replace(term, term=="RuminacaoUltimas24h_k1.media", "RuminacaoUltimas24h.media")) %>%
+  mutate(term=replace(term, term=="AlimentacaoUltimas24h_k1.media", "AlimentacaoUltimas24h.media")) %>%
   mutate(p.value=replace(p.value, p.value < 0.05, "<0,05")) %>%
   kable(caption = "Resultados do ajuste do modelo sem medidas repetidas obtido por stepwise.", col.names = c("Termo","Estimativa","Erro padrão","Estatística do teste","P-valor")) %>%
   kable_styling(position = "center",latex_options = "HOLD_position")
@@ -631,7 +638,7 @@ df = df %>%
          DiasSecos = DDRY,
          DiasRegimeFechado = PREFR,
          NumBezerro = NCALF,
-         ProdLeite = Yield,
+         ProdLeite_k1 = Yield,
          Gordura = Fat,
          Proteina = Protein,
          Sangue = Blood,
@@ -640,8 +647,8 @@ df = df %>%
          NumRespousos = RestBout,
          DuracaoMediaRepouso = RestPerBout,
          Atividade = Activity,
-         RuminacaoUltimas24h = RumLast24,
-         AlimentacaoUltimas24h = EatLast24,
+         RuminacaoUltimas24h_k1 = RumLast24,
+         AlimentacaoUltimas24h_k1 = EatLast24,
          Hist_DistDigestivo = PL_METDIG,
          Hist_Mastite = PL_MAST_ALL,
          Hist_Claudicacao = PL_LAME_ALL,
@@ -657,7 +664,7 @@ df_per = df %>% filter(DiasLac %in% seq(-7,21))
 df_per$ID = as.factor(df_per$ID)
 
 df_per_red = df_per %>% dplyr::select(DiasLac,ID,Gordura,Proteina, DuracaoMediaRepouso,
-                                      RuminacaoUltimas24h, AlimentacaoUltimas24h, ProdLeite,
+                                      RuminacaoUltimas24h_k1, AlimentacaoUltimas24h_k1, ProdLeite_k1,
                                       SICK_ALL) %>%
   filter(DiasLac %in% seq(0,20))
 
@@ -665,11 +672,11 @@ df_per_red = df_per %>% dplyr::select(DiasLac,ID,Gordura,Proteina, DuracaoMediaR
 df_per_red = df_per_red %>%
   group_by(ID) %>%
   mutate(doente_amanha = dplyr::lead(SICK_ALL, n = 1, default = NA),
-         doente_ontem = dplyr::lag(SICK_ALL, default = NA),
-         ProdLeite_ontem = dplyr::lag(ProdLeite, default = NA),
+         doente_k2 = dplyr::lag(SICK_ALL, default = NA),
+         ProdLeite_k2 = dplyr::lag(ProdLeite_k1, default = NA),
          Gordura_ontem = dplyr::lag(Gordura, default = NA),
-         RuminacaoUltimas24h_ontem = dplyr::lag(RuminacaoUltimas24h, default = NA),
-         AlimentacaoUltimas24h_ontem = dplyr::lag(AlimentacaoUltimas24h, default = NA))
+        RuminacaoUltimas24h_k2= dplyr::lag(RuminacaoUltimas24h_k1, default = NA),
+         AlimentacaoUltimas24h_k2 = dplyr::lag(AlimentacaoUltimas24h_k1, default = NA))
 
 #Eliminando obs faltantes
 df_gam = df_per_red %>%
@@ -680,14 +687,14 @@ df_gam = df_per_red %>%
 
 #Convertando
 df_gam$doente_amanha = as.factor(df_gam$doente_amanha - 1)
-df_gam$doente_ontem = as.factor(df_gam$doente_ontem - 1)
+df_gam$doente_k2 = as.factor(df_gam$doente_k2 - 1)
 df_gam$SICK_ALL = as.factor(df_gam$SICK_ALL - 1)
 df_gam$ID = as.factor(df_gam$ID)
 
 #Repouso -1 = 0
 df_gam$DuracaoMediaRepouso[df_gam$DuracaoMediaRepouso <= -1] = 0
 
-df_gam = df_gam %>% rename(doente_hoje = SICK_ALL)
+df_gam = df_gam %>% rename(doente_k1 = SICK_ALL)
 
 
 #Quantidade de vezes que as vacas ficaram doentes
@@ -741,14 +748,14 @@ df_gam$soma_vezes_doentes_sep = factor(df_gam$soma_vezes_doentes_sep,
     df_cv_pleno_func_ar1 = cv_pleno(df_gam, n_cv = v,n_interacao = i, "ID")
     mol1 = gamm(doente_amanha ~ #Gordura +
                   #Gordura_ontem +
-                  RuminacaoUltimas24h * 
-                  RuminacaoUltimas24h_ontem +
-                  AlimentacaoUltimas24h *
-                  AlimentacaoUltimas24h_ontem +
-                  doente_hoje * 
-                  doente_ontem +
-                  ProdLeite *
-                  ProdLeite_ontem +
+                  RuminacaoUltimas24h_k1 * 
+                  RuminacaoUltimas24h_k2+
+                  AlimentacaoUltimas24h_k1 *
+                  AlimentacaoUltimas24h_k2 +
+                  doente_k1 * 
+                  doente_k2 +
+                  ProdLeite_k1 *
+                  ProdLeite_k2 +
                   #DuracaoMediaRepouso +
                   #DiasNaoGravida+ 
                   DiasLac,
@@ -861,14 +868,14 @@ As curvas ROC e a acurácia do modelo misto escalar-funcional, na Figura 5, apon
 #Ctrl + shift + C
 # mol1 = gamm(doente_amanha ~ #Gordura +
 #                   #Gordura_ontem +
-#                   RuminacaoUltimas24h * 
-#                   RuminacaoUltimas24h_ontem +
-#                   AlimentacaoUltimas24h *
-#                   AlimentacaoUltimas24h_ontem +
-#                   doente_hoje * 
-#                   doente_ontem + 
-#                   ProdLeite *
-#                   ProdLeite_ontem +
+#                   RuminacaoUltimas24h_k1 * 
+#                  RuminacaoUltimas24h_k2+
+#                   AlimentacaoUltimas24h_k1 *
+#                   AlimentacaoUltimas24h_k2 +
+#                   doente_k1 * 
+#                   doente_k2 + 
+#                   ProdLeite_k1 *
+#                   ProdLeite_k2 +
 #                   #DuracaoMediaRepouso +
 #                   #DiasNaoGravida+ 
 #                   DiasLac,
@@ -882,7 +889,7 @@ As curvas ROC e a acurácia do modelo misto escalar-funcional, na Figura 5, apon
 # kable(as.data.frame(mol1_gam$p.table) %>% tibble::rownames_to_column("term") %>%
 #         mutate_if(is.numeric, round, 3) %>%
 #         mutate(term=replace(term, term == "(Intercept)", "Intercepto")) %>%
-#         mutate(term=replace(term, term == "SICK_ALL1", "Doente_Ontem")) %>%
+#         mutate(term=replace(term, term == "SICK_ALL1", "doente_k2")) %>%
 #         mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` < 0.001, "<0,001"))%>%
 #         mutate(Estimate=replace(Estimate, Estimate < 0.001, "<0,001")) %>%
 #         mutate(`Std. Error`=replace(`Std. Error`, `Std. Error` < 0.001, "<0,001")),
@@ -906,14 +913,14 @@ As curvas ROC e a acurácia do modelo misto escalar-funcional, na Figura 5, apon
     df_cv_pleno_func_ar1 = cv_pleno(df_gam, n_cv = v,n_interacao = i, "ID")
     mol1 = gamm(doente_amanha ~ #Gordura +
                   #Gordura_ontem +
-                  RuminacaoUltimas24h * 
-                  RuminacaoUltimas24h_ontem +
-                  AlimentacaoUltimas24h *
-                  AlimentacaoUltimas24h_ontem +
-                  doente_hoje * 
-                  doente_ontem + 
-                  ProdLeite *
-                  ProdLeite_ontem +
+                  RuminacaoUltimas24h_k1 * 
+                  RuminacaoUltimas24h_k2+
+                  AlimentacaoUltimas24h_k1 *
+                  AlimentacaoUltimas24h_k2 +
+                  doente_k1 * 
+                  doente_k2 + 
+                  ProdLeite_k1 *
+                  ProdLeite_k2 +
                   #DuracaoMediaRepouso +
                   #DiasNaoGravida+ 
                   s(DiasLac, bs = 'cr'),
@@ -984,7 +991,7 @@ AUC_pleno = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
   ylim(c(0,1.0))+
   xlim(c(0,1.0))+
   annotate(geom="text", x=0.6, y=0.1, col="#1FB477", 
-           label=paste("Média das áreas sob a curvas = ",round(mean(c(area_cv_pleno_func_ar1)),3))) +
+           label=paste("Média das áreas sob a curvas = ", 0.927)) +
   annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório",
            color = "black",
            angle = 40)+
@@ -1020,21 +1027,21 @@ AUC_pleno + acuracia_pleno
 
 As estimativas dos efeitos escalares do modelo misto escalar-funcional, agora com todos os dados do conjunto de dados, se encontram na Tabela 4. As variáveis referentes a ruminação durante as últimas 24 horas e se o animal apresentou estar doente nos dias anteriores tem efeito positivo no logito, indicando que a probabilidade da vaca ficar doente aumenta quando há um aumento na ruminação ou se a vaca ficou doente nos dois dias anteriores. Enquanto que as variáveis produção de leite e alimentação nas últimas 24 horas tem efeito negativo, indicando que a probabilidade de adoecer diminui quando há um acréscimo nessas variáveis. Além disso, como a estimativa da interação entre o estado de saúde dos dias anteriores tem efeito positivo no logito, isso nos diz que há um aumento na probabilidade de vir a ficar doente quando o animal esteve doente nos dois dias anteriores em comparação com não estiver doente ou estiver doente em apenas um dia.
 
-A Figura 7 exibe a curva estimada a variável funcional referente ao dia de lactação. A estimação dos coeficientes de suavização, $\hat{B_p}$, em (3) para a curva de dia de lactação mostrou se estatisticamente significantes já que a função estimada $s(DiasLac)$ tem p-valor menor do que 0.001, como descrito na Tabela 5.
+A Figura 7 exibe a curva estimada a variável funcional referente ao dia de lactação. A estimação dos coeficientes de suavização, $\hat{B_p}$, em (3) para a curva de dia de lactação mostrou se estatisticamente significantes já que a função estimada $s(DiasLac)$ tem p-valor menor do que 0,001, como descrito na Tabela 5.
 
 
 
 ```{r ajuste esc fun,results='hide', comment = NA}
 mol1 = gamm(doente_amanha ~ #Gordura +
                   #Gordura_ontem +
-                  RuminacaoUltimas24h * 
-                  RuminacaoUltimas24h_ontem +
-                  AlimentacaoUltimas24h *
-                  AlimentacaoUltimas24h_ontem +
-                  doente_hoje * 
-                  doente_ontem +
-                  ProdLeite +
-                  ProdLeite_ontem +
+                  RuminacaoUltimas24h_k1 * 
+                 RuminacaoUltimas24h_k2+
+                  AlimentacaoUltimas24h_k1 *
+                  AlimentacaoUltimas24h_k2 +
+                  doente_k1 * 
+                  doente_k2 +
+                  ProdLeite_k1 +
+                  ProdLeite_k2 +
                   #DuracaoMediaRepouso +
                   #DiasNaoGravida+ 
                   s(DiasLac, bs = 'cr'),
@@ -1053,13 +1060,13 @@ mol1_gam = summary.gam(mol1$gam)
 kable(as.data.frame(mol1_gam$p.table) %>% tibble::rownames_to_column("term") %>%
         mutate_if(is.numeric, round, 3) %>%
         mutate(term=replace(term, term == "(Intercept)", "Intercepto")) %>%
-        mutate(term=replace(term, term == "SICK_ALL1", "Doente_Ontem")) %>%
+        mutate(term=replace(term, term == "SICK_ALL1", "doente_k2")) %>%
         mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` < 0.001, "<0,001")) %>%
         mutate(Estimate=replace(Estimate, Estimate < 0.001 & Estimate >= 0, "<0,001")) %>%
         mutate(Estimate=replace(Estimate, Estimate > -0.001 & Estimate <= 0, ">-0,001")) %>%
         mutate(`Std. Error`=replace(`Std. Error`, `Std. Error` < 0.001, "<0,001"))
         ,
-        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional.",
+        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional. <0,001 e >-0,001 são referentes à valores pequenos positivos e negativos, respectivamente. k1 e k2 são referentes à k-1 e k-2, respectivamente",
         col.names = c("Termo","Estimativa","Erro padrão","Estatística do teste","P-valor"))  %>%
   kable_styling(font_size = 10, latex_options = "HOLD_position")
 ```
@@ -1141,6 +1148,8 @@ acuracias_intervalo
 
 
 Os resultados indicam que a utilização de variáveis funcionais traz uma melhora para a capacidade de predição em comparação com o modelo misto escalar para essa abordagem, pois a área sob a curva e a acurácia apresentaram um aumento.
+
+\newpage
 
 # 5 Conclusão
 
