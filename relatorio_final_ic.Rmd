@@ -214,11 +214,11 @@ Neste trabalho, consideramos um nível de significância igual a 0,05. Para real
  
 # 2 Validação cruzada 
 
-Para avaliação da capacidade preditiva dos modelos, foi realizada uma validação cruzada com 10 reparticionamentos e com 10 envelopes, cada um contendo 10% do dados, em duas partes: 9 envelopes foram utilizados para o ajuste, i.e. treino, e um envelope foi usado para o verificação de qualidade de predição do modelo, i.e. teste, em cada repartição. Veja a Figura 1 que representa um diagrama simplificado da validação cruzada que está sendo empregada. Para mais informações sobre validação cruzada veja Kohavi (2007).
+Para avaliação da capacidade preditiva dos modelos, foi realizada uma validação cruzada com 10 reparticionamentos e com 10 envelopes, cada um contendo 10% do dados, em duas partes: 9 envelopes foram utilizados para o ajuste, i.e. treino, e um envelope foi usado para o verificação de qualidade de predição do modelo, i.e. teste, em cada repartição. Veja a Figura 1 que representa um diagrama simplificado da validação cruzada que foi empregado. Para mais informações sobre validação cruzada veja Kohavi (2007).
 
 A forma de checagem da performance do modelo se deu através da curva ROC (Bradley, 1997) conjuntamente com a área sob a curva da mesma (Ballings and Van den Poel, 2013) e acurácia (Novaković et al. 2017). A área sob a curva da curva ROC quantifica a capacidade do modelo em discriminar entre aqueles animais classificados como doentes dado que de fato são doentes e aqueles classificados como sadios quando na verdade foram observados como tal. Um modelo com capacidade de predição tão informativo quanto um classificador aleatório tem uma área igual a 0,5, já um modelo perfeito tem uma área igual a 1. Enquanto, a acurácia indica qual é a porcentagem de predições corretas que o modelo é capaz de realizar.
 
-Como é provável que surjam novas vacas que irão produzir leite no local onde foi coletado os dados (bezerras nascidas no local que chegam a idade de reprodução, por exemplo), isso foi levado em conta no problema. Com isso, as separação dos envelopes da validação cruzada ocorreram de modo que no conjunto treino não podem haver vacas que estão no conjunto de teste, e vice-versa. Dessa forma, é possível simular um cenário semelhante ao do futuro. Além disso, para haver uma amostra mais representativa no conjunto de teste, a validação cruzada ocorreu de tal modo que as observações de um animal só poderiam aparecer uma vez nesse conjunto. Com isso, ocorreu uma única predição para cada uma das observações no conjunto de dados na parte de validação dos modelos.
+Como é provável que surjam novas vacas que irão produzir leite no local onde foi coletado os dados (bezerras nascidas no local que chegam a idade de reprodução, por exemplo), isso foi levado em conta no problema. Com isso, a separação dos envelopes da validação cruzada ocorreu de modo que no conjunto treino não podem haver vacas que estão no conjunto de teste, e vice-versa. Dessa forma, é possível simular um cenário semelhante ao do futuro. Além disso, para haver uma amostra mais representativa no conjunto de teste, a validação cruzada ocorreu de tal modo que as observações de um animal só poderiam aparecer uma vez nesse conjunto. Com isso, ocorreu uma única predição para cada uma das observações no conjunto de dados na parte de validação dos modelos.
 
 As funções utilizadas para realizar a validação cruzada e a checagem da qualidade de predição foram desenvolvidas pelo autor do relatório com o auxílio do pacote \textit{Tidyverse} (Wickham et al. 2019).
 
@@ -826,7 +826,7 @@ AUC_pleno = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
   ylim(c(0,1.0))+
   xlim(c(0,1.0))+
   annotate(geom="text", x=0.6, y=0.1, col="#1FB477", 
-           label=paste("Média das áreas sob a curvas = ",round(mean(c(area_cv_pleno_func_ar1)),3))) +
+           label=paste("Média das áreas sob a curvas = ", 0.927)) +
   annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório",
            color = "black",
            angle = 40)+
@@ -991,7 +991,7 @@ AUC_pleno = ggplot(rocs, aes(fpr,tpr, colour = as.factor(n_cv))) +
   ylim(c(0,1.0))+
   xlim(c(0,1.0))+
   annotate(geom="text", x=0.6, y=0.1, col="#1FB477", 
-           label=paste("Média das áreas sob a curvas = ", 0.927)) +
+           label=paste("Média das áreas sob a curvas = ", round(mean(c(area_cv_pleno_func_ar1)),3))) +
   annotate(geom = "text", x = 0.5, y = 0.45, label = "Classificador Aleatório",
            color = "black",
            angle = 40)+
@@ -1027,7 +1027,7 @@ AUC_pleno + acuracia_pleno
 
 As estimativas dos efeitos escalares do modelo misto escalar-funcional, agora com todos os dados do conjunto de dados, se encontram na Tabela 4. As variáveis referentes a ruminação durante as últimas 24 horas e se o animal apresentou estar doente nos dias anteriores tem efeito positivo no logito, indicando que a probabilidade da vaca ficar doente aumenta quando há um aumento na ruminação ou se a vaca ficou doente nos dois dias anteriores. Enquanto que as variáveis produção de leite e alimentação nas últimas 24 horas tem efeito negativo, indicando que a probabilidade de adoecer diminui quando há um acréscimo nessas variáveis. Além disso, como a estimativa da interação entre o estado de saúde dos dias anteriores tem efeito positivo no logito, isso nos diz que há um aumento na probabilidade de vir a ficar doente quando o animal esteve doente nos dois dias anteriores em comparação com não estiver doente ou estiver doente em apenas um dia.
 
-A Figura 7 exibe a curva estimada a variável funcional referente ao dia de lactação. A estimação dos coeficientes de suavização, $\hat{B_p}$, em (3) para a curva de dia de lactação mostrou se estatisticamente significantes já que a função estimada $s(DiasLac)$ tem p-valor menor do que 0,001, como descrito na Tabela 5.
+A Figura 7 exibe a curva estimada a variável funcional referente ao dia de lactação. A estimação dos coeficientes de suavização, $\hat{B_p}$, em (3) para a curva de dia de lactação mostrou se estatisticamente significante já que a função estimada $s(DiasLac)$ tem p-valor menor do que 0,001, como descrito na Tabela 5.
 
 
 
@@ -1060,13 +1060,16 @@ mol1_gam = summary.gam(mol1$gam)
 kable(as.data.frame(mol1_gam$p.table) %>% tibble::rownames_to_column("term") %>%
         mutate_if(is.numeric, round, 3) %>%
         mutate(term=replace(term, term == "(Intercept)", "Intercepto")) %>%
+        mutate(term=replace(term, term=="doente_k11", "doente_k1")) %>%
+        mutate(term=replace(term, term=="doente_k21", "doente_k2")) %>%
+        mutate(term=replace(term, term == "doente_k11:doente_k21", "doente_k1:doente_k2")) %>%
         mutate(term=replace(term, term == "SICK_ALL1", "doente_k2")) %>%
         mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` < 0.001, "<0,001")) %>%
         mutate(Estimate=replace(Estimate, Estimate < 0.001 & Estimate >= 0, "<0,001")) %>%
         mutate(Estimate=replace(Estimate, Estimate > -0.001 & Estimate <= 0, ">-0,001")) %>%
         mutate(`Std. Error`=replace(`Std. Error`, `Std. Error` < 0.001, "<0,001"))
         ,
-        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional. <0,001 e >-0,001 são referentes à valores pequenos positivos e negativos, respectivamente. k1 e k2 são referentes à k-1 e k-2, respectivamente",
+        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional. <0,001 e >-0,001 são referentes à valores pequenos positivos e negativos, respectivamente. k1 e k2 são referentes à k-1 e k-2, respectivamente.",
         col.names = c("Termo","Estimativa","Erro padrão","Estatística do teste","P-valor"))  %>%
   kable_styling(font_size = 10, latex_options = "HOLD_position")
 ```
@@ -1085,7 +1088,7 @@ kable(as.data.frame(broom::tidy(mol1$gam) %>% mutate_if(is.numeric, round, 3) %>
 ```
 
 Como a maior parte das observações entre o dia do parto até os vinte dias posteriores são de estados de saúde saudáveis, cerca de 90%, logo um modelo que predissesse todas as observações como saudáveis também teria uma acurácia de 90%. Para investigar mais a fundo como ocorre a classificação no modelo misto escalar-funcional, construiu-se a Figura 8. Ao invés de analisar a acurácia geral do modelo, dividiu-se as observações do teste em intervalos referentes a quantos dias a vaca referente a essa observação apresentou ficar doente. Cada ponto mais transparente é a acurácia no intervalo em uma repartição da validação cruzada, já os pontos opacos são a média de acurácia no intervalo. Podemos ver que o modelo possui uma acurácia praticamente perfeita entre as vacas que não ficaram doentes em nenhum dos dias considerados, e cai quando se avança nos intervalos. Entretanto, a média acurácia se manteve maior que 75% nos demais intervalos. Com isso, o modelo ajustado apresenta ser superior a um classificador simplório, i.e. classifica tudo igual, pois ele consegue predizer corretamente, com uma boa acurácia, as observações marcadas com distúrbio de saúde presente.
-Na Figura 7, há ainda uma linha demarcando a acurácia média do modelo misto escalar-funcional no corte que otimiza essa medida. A tabela nessa figura mostra a quantidade média de observações dos intervalos de vezes que as vacas ficaram doentes entre o parto e os 20 dias posteriores em cada envelope da validação cruzada, então, por exemplo, em um envelope há em média 644 observações de animais que não ficaram doentes durante esse período
+Na Figura 7, há ainda uma linha demarcando a acurácia média do modelo misto escalar-funcional no corte que otimiza essa medida. A tabela nessa figura mostra a quantidade média de observações dos intervalos de vezes que as vacas ficaram doentes entre o parto e os 20 dias posteriores em cada envelope da validação cruzada, então, por exemplo, em um envelope há em média 643 observações de animais que não ficaram doentes durante esse período
 
 
 ```{r plot intervalo, fig.width=9,fig.height=4, fig.cap="Acurácia em intervalos de quantas vezes as vacas do conjunto de teste ficaram doentes entre o dia do parto e os 20 dias posteriores, obtida pela validação cruzada."}
@@ -1133,7 +1136,7 @@ acuracias_intervalo  = stat_vacas %>%
            label = "Média das acurácias das validações cruzadas = 0.947",
            color = "black", size = 3)+
   annotate(geom = "text", x = 1.5, y = 0.60,
-           label = "Como a maioria das observações são 'Não Doentes',\neste intervalo tem mais influência que os outros na\nmédia da acurácia.",
+           label = "Como a maioria das vacas não ficaram doentes,\neste intervalo tem mais influência que os outros na\nmédia da acurácia.",
            color = "black", size = 3)+
   xlab("Intervalo de vezes que o animal ficou doente entre o parto e 20 dias após o parto")+
   ylab("Acurácia")+
@@ -1147,13 +1150,18 @@ acuracias_intervalo
 ```
 
 
-Os resultados indicam que a utilização de variáveis funcionais traz uma melhora para a capacidade de predição em comparação com o modelo misto escalar para essa abordagem, pois a área sob a curva e a acurácia apresentaram um aumento.
+Os resultados indicam que a utilização de variáveis funcionais trouxe uma melhora para a capacidade de predição em comparação com o modelo misto escalar para essa abordagem, pois a área sob a curva e a acurácia apresentaram um aumento.
 
 \newpage
 
 # 5 Conclusão
 
 Os resultados obtidos neste trabalho apresentam duas abordagens com uso de modelos para predição do estado de saúde animal no contexto do período periparturiente em vacas leiteiras. A escolha de qual abordagem dependerá das exigências do usuário. Se a pessoa interessada querer predizer com uma antecedência maior o estado do animal, é mais provável que ela tenha preferência pela abordagem sem medidas repetidas. Já se a preferência for por uma modelo com uma capacidade preditiva maior e a antecedência do resultado curta não seja um empecilho, é mais provável que se opte pelo modelo com medidas repetidas.
+
+# 6 Realizações do período
+
+Durante a segunda quinzena de fevereiro, foi realizado o estudo bibliográfico para validação cruzada, cujas funções foram criadas em março, junto dos gráficos para a checagem da qualidade de predição do modelo. Ainda em março, iniciou-se a escrita do relatório, a qual terminou em abril. Ao longo de todo esse período, ocorreram reuniões semanais com a orientadora, a fim de esclarecer dúvidas gerais sobre o projeto.
+
 
 \newpage
 
