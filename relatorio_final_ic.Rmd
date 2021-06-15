@@ -199,12 +199,12 @@ Seja $Y_i$ o estado de saúde da vaca i (1 para doente e 0, caso contrário) em 
 
 $$ \textrm{logito}(p_i) = \beta_0 + \sum_{j=1}^{J}\beta_jx_{ij} \tag{1},$$ onde $\textrm{logito}(p_i) = log(p_i/(1-p_i)$, $x_{ij}$ representa a j-ésima variável explicativa da vaca i e $\beta_j$, o efeito desta variável no logito. Para essa abordagem, cada vaca possui uma única observação.
 
-Posteriormente, ajustamos o modelo que acomoda as medidas repetidas de cada animal tomadas entre o dia do parto 0 dias e 20 dias após este evento. Consideramos um efeito aleatório $u_i \sim N(0,\sigma^2)$  para acomodar a correlação intra-animal, devido a repetição de medições das vacas em tempos diferentes. Suponha $Y_{ik}$ seja o estado de saúde da vaca i (1 para doente e 0, caso contrário) em um determinado dia k, e seja $E(Y_{ik})=p_{ik}$ a probabilidade do animal i estar doente no dia k. Consideramos o ajuste de
+Posteriormente, ajustamos o modelo que acomoda as medidas repetidas de cada animal tomadas entre o dia do parto e 20 dias após este evento. Consideramos um efeito aleatório $u_i \sim N(0,\sigma^2)$ para acomodar a correlação das observações do mesmo animal, devido a repetição de medições das vacas em tempos diferentes. Suponha que $Y_{ik}$ seja o estado de saúde da vaca i (1 para doente e 0, caso contrário) em um determinado dia k, e seja $E(Y_{ik})=p_{ik}$ a probabilidade do animal i estar doente no dia k. Consideramos o ajuste de
 
 $$ \textrm{logito}(p_{ik}) = \beta_0 + \sum_{j=1}^{J}f_j(x_{ij(k-1,k-2)})
 + u_{i} \tag{2}.$$ 
 
-Aqui, $f_j(x)$ são funções suaves de $x_{ij(k-1,k-2)}$, $k-1$ e $k-2$ indexam 1 e 2 dias anteriores ao dia k,respectivamente, e $j$ indexa a variável explicativa. A função $f_j(x)$ será estimada através de 
+Aqui, $\textrm{logito}(p_{ik}) = log(p_{ik}/(1-p_{ik})$, $f_j(x)$ são funções suaves de $x_{ij(k-1,k-2)}$, $k-1$ e $k-2$ indexam 1 e 2 dias anteriores ao dia k, respectivamente, e $j$ indexa a variável explicativa. A função $f_j(x)$ será estimada através de 
 
 $$\hat{f_j}(x) = \sum_{p=1}^{P}\hat{B_p}b_p(x) \tag{3},$$ onde $b_p$ são as funções bases e $\hat{B_p}$ seus respectivos coeficientes.
 
@@ -218,30 +218,24 @@ Neste trabalho, consideramos um nível de significância igual a 0,05. Para real
 
 O conjunto de dados utilizado para este trabalho apresenta 71 observações para cada uma das 500 vacas estudadas, coletadas 30 dias antes do parto até 40 dias depois, resultando em um total de 35500 observações.
 
-Além disso, o conjunto de dados apresentou diversos dados faltantes nas covariáveis. Para contornar esse problema tomou-se o seguinte procedimento: se o animal apresentou pelo menos um dado faltante para uma variável, o dado faltante foi substituido pela média dos dados não faltantes. Para o animal sem nenhuma informação numa determinada variável, o valor imputado foi a mediana da variável para as vacas com informação
+Além disso, o conjunto de dados apresentou diversos dados faltantes nas covariáveis. Para contornar esse problema tomou-se o seguinte procedimento: se o animal apresentou pelo menos um dado faltante para uma variável, o dado faltante foi substituido pela média dos dados não faltantes. Para o animal sem nenhuma informação numa determinada variável, o valor imputado foi a mediana da variável para as vacas com informação.
  
  
 # 3 Validação cruzada 
 
-Para avaliação da capacidade preditiva dos modelos, foi realizada uma validação cruzada com 10 reparticionamentos e com 10 envelopes contendo as observações dos animais, cada um contendo 10% do dados, em duas partes: 9 envelopes foram utilizados para o ajuste, i.e. treino, e um envelope foi usado para o verificação de qualidade de predição do modelo, i.e. teste, em cada repartição. Veja a Figura 1 que representa um diagrama simplificado da validação cruzada que foi empregado. Para mais informações sobre validação cruzada veja Kohavi (2007).
+Para avaliação da capacidade preditiva dos modelos, foi realizada uma validação cruzada com 10 reparticionamentos e com 10 envelopes contendo observações de 50 vacas cada, pois há 500 animais no banco de dados. Em cada repartição, os envelopes foram separados em duas partes: 9 envelopes foram utilizados para o ajuste, i.e. treino, e um envelope foi usado para o verificação de qualidade de predição do modelo, i.e. teste . Veja a Figura 1 que representa um diagrama simplificado da validação cruzada que foi empregado. Para mais informações sobre validação cruzada veja Kohavi (2007).
 
 A forma de checagem da performance do modelo se deu através da área sob a curva da ROC (Bradley, 1997; Ballings and Van den Poel, 2013) e da acurácia (Novaković et al. 2017). A área sob a curva da ROC quantifica a capacidade do modelo em discriminar entre aqueles animais classificados como doentes dado que de fato são doentes e aqueles classificados como sadios. Um modelo com capacidade de predição tão informativo quanto um classificador aleatório tem uma área igual a 0,5, enquanto que um modelo perfeito tem uma área sob a curva igual a 1. Por outro lado, a acurácia indica qual é a porcentagem de predições corretas que o modelo é capaz de realizar.
 
 Com o intuito de avaliar a capacidade de predição do modelo para animais que futuramente venham a fazer parte do local onde foram coletados os dados, simulamos esta situação considerando que animais no conjunto de treino não fazem parte do conjunto de dados para fins de teste simultaneamente. 
 
-As funções do pacote R utilizadas para realizar a validação cruzada e a checagem da qualidade de predição foram desenvolvidas pelo autor do relatório com o auxílio do pacote \textit{Tidyverse} (link)(Wickham et al. 2019).
+As funções do pacote R utilizadas para realizar a validação cruzada e a checagem da qualidade de predição foram desenvolvidas pelo autor do relatório com o auxílio do pacote \textit{Tidyverse}(Wickham et al. 2019). As funções escritas em linguagem R pelo autor se encontram disponíveis no seguinte link: \url{https://github.com/rodrigoforti2000/funcoes-uteis}.
 
 
 ```{r, out.width = "99%", fig.cap="Diagrama simplificado da validação cruzada empregado neste trabalho. O conjunto de dados foi separado em 10 envelopes e não há observações de um mesmo animal em envelopes diferentes. Após isso ocorreu 10 repartições onde 9 envelopes eram utilizados para treino e 1 para o teste do modelo."}
-img1_path <- "C:/Users/Windows 10/Downloads/Treino.png"
+img1_path <- "C:/Users/Windows 10/Documents/GitHub/Final_IC/Treino_1.png"
 include_graphics(img1_path)
 ```
-
-
-
-
-
-\newpage
 
 # 4 Resultados
 
@@ -249,7 +243,7 @@ Foram utilizadas duas abordagens  para resolver o problema de classificação en
 
 ## 4.1 Resultados do ajuste do modelo sem medidas repetidas de saúde da vaca
 
-Como mostra a Figura 2, as vacas ficaram doentes majoritariamente no período entre 5 até 20 dias após o parto.
+Como mostra a Figura 2, as vacas ficaram doentes majoritariamente no período entre 5 até 20 dias após o parto. Após esse período, menos de 1% das observações são de vacas em estado doentio, o que dificulta a predição, pois o estado doentio se torna um evento raro. Por isso, trabalhamos apenas com os dados do dia 5 até o dia 20 após o parto.  
 
 
 ```{r pacotes e funcoes}
@@ -474,6 +468,8 @@ ggplot(df, aes(DiasLac, ProdLeite_k1, col = SICK_ALL)) +
         alpha = .2, fill = "darkgrey") +
   annotate("text",x = -1, y = 45000, label = "Período para o cálculo\ndas medidas resumos", col = "black", size = 2)+
   annotate("text",x = 12, y = 60000, label = "Período de maior incidência\nde distúrbios de saúde", col = "black", size = 2)
+
+#df %>% filter(DiasLac %in% seq(20,25)) %>% summarise(mean(as.numeric(SICK_ALL) - 1, na.rm = T))
 ```
 
 
@@ -620,7 +616,7 @@ Ajustamos o modelo (2) considerando duas abordagens: uma delas considera as vari
 
 Além disso, nas duas abordagens um efeito aleatório para cada vaca foi considerado para acomodar a correlação entre as medidas de cada animal. Chamaremos o modelo da primeira abordagem como modelo misto escalar (MME) e o da segunda de modelo misto escalar-funcional (MMEF).  
 
-Para predizer o estado do animal no dia $k$, do ponto de vista biológico, fez sentido considerar o efeito das covariáveis sobre o estado de saúde do animal que foram medidas no dia $k-1$ e $k-2$. Não ocorreu nenhuma melhora significativa ao utilizar dias anteriores à $k-2$. Sendo assim, para o modelo em (2), consideramos o estado do animal $i$ no dia $k$ como função das covariáveis $x_{i,1,(k-1, k-2)},\dots x_{i,J,(k-1, k-2)}$. Desta forma, para o dia do parto utilizamos informações das variáveis medidas nos dois dias anteriores e assim sucessivamente até o vigésimo dia após o parto. Escolhe-se esse ponto de parada, pois os distúrbios de saúde ficam raros após esse período, como podemos ver na Figura 2.
+Para predizer o estado do animal no dia $k$, do ponto de vista biológico, fez sentido considerar o efeito das covariáveis sobre o estado de saúde do animal que foram medidas no dia $k-1$ e $k-2$. Não ocorreu nenhuma melhora significativa ao utilizar dias anteriores à $k-2$. Sendo assim, para o modelo em (2), consideramos o estado do animal $i$ no dia $k$ como função das covariáveis $x_{i,1,(k-1, k-2)},\dots x_{i,J,(k-1, k-2)}$. Desta forma, para o dia do parto utilizamos informações das variáveis medidas nos dois dias anteriores e assim sucessivamente até o vigésimo dia após o parto. Escolheu-se esse ponto de parada, pois os distúrbios de saúde ficam raros após esse período, como podemos ver na Figura 2.
 
 Como utilizou-se informações de dias diferentes para realizar a predição do estado de saúde, logo foi possível adicionar ao modelo a interação entre variáveis de mesma natureza desses dias, por exemplo, interação entre estado de saúde no dia $k-1$ e $k-2$.
 
@@ -759,8 +755,8 @@ df_gam$soma_vezes_doentes_sep = factor(df_gam$soma_vezes_doentes_sep,
                   AlimentacaoUltimas24h_k2 +
                   doente_k1 * 
                   doente_k2 +
-                  ProdLeite_k1 *
-                  ProdLeite_k2 +
+                  #ProdLeite_k1 *
+                  #ProdLeite_k2 +
                   #DuracaoMediaRepouso +
                   #DiasNaoGravida+ 
                   DiasLac,
@@ -810,10 +806,12 @@ df_gam$soma_vezes_doentes_sep = factor(df_gam$soma_vezes_doentes_sep,
 
 
 #summary(mol1$gam)
+
+#mean(acuracias[acuracias$corte == 0.4,]$acuracia)
 ```
 
 
-```{r AUC e acurácia esc, fig.width=9,fig.height=4,fig.cap="Curvas ROC e acurácias do modelo misto escalar obtidas por meio de validação cruzada."}
+```{r AUC e acurácia esc, fig.width=9,fig.height=4,fig.cap="Curvas ROC e acurácias do MME obtidas por meio de validação cruzada."}
 #ROC curve
 rocs = NULL
 for(i in 1:v){
@@ -864,7 +862,7 @@ acuracia_pleno = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) 
 AUC_pleno + acuracia_pleno
 ```
 
-Para o MMEF, a variável referente aos dias de lactação foi utilizada como funcional devido a aparente não linearidade, como pode ser identificado na Figura 2. Há uma aparente menor quantidade de distúrbios de saúde entre os dias 0 a 5, uma maior quantidade entre os dias 5 a 15 e uma leve diminuição no número de ocorrências até o dia 20, como também mostra a Figura 2. As outras variáveis apresentaram comportamentos lineares quando analisadas separadamente em um modelo individual, ou seja, apenas com uma variável. Logo, elas foram mantidas na forma escalar.
+Para o MMEF, a variável referente aos dias de lactação foi utilizada como funcional. Entre o dia do parto até quinto dia após esse evento, 5,4% das observações são doentes. Entre o quinto e o décimo dia, 16,7% são doentes. Entre o décimo e o décimo quinto, 11,4% são doentes. E entre o décimo quinto e o vigésimo dia após o parto, apenas 4,8% são observações não doentes, o que indicia a aparente não linearidade dessa variável em relação ao estado de saúde dos animais. Logo, nesse caso, uma variável referente aos dias de lactação do tipo funcional se encaixa melhor no modelo. As outras variáveis apresentaram comportamentos lineares quando analisadas separadamente em um modelo individual, ou seja, apenas com uma variável. Logo, elas foram mantidas na forma escalar.
 
 As curvas ROC e a acurácia do MMEF, apresentados na Figura 5, apontam que a capacidade de predição é muito boa, pois a média das área sob a curva da ROC e a média acurácia, no valor de corte em que essa é otimizada, são maiores que 0,9, indicando um bom poder preditivo que supera o do MME. 
 
@@ -978,7 +976,7 @@ As curvas ROC e a acurácia do MMEF, apresentados na Figura 5, apontam que a cap
 ```
 
 
-```{r AUC e acurácia, fig.width=9,fig.height=4,fig.cap="Curvas ROC e acurácias do modelo misto escalar-funcional obtidas por meio de validação cruzada."}
+```{r AUC e acurácia, fig.width=9,fig.height=4,fig.cap="Curvas ROC e acurácias do MMEF obtidas por meio de validação cruzada."}
 #ROC curve
 rocs = NULL
 for(i in 1:v){
@@ -1027,6 +1025,10 @@ acuracia_pleno = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) 
 
 
 AUC_pleno + acuracia_pleno
+
+#mean(acuracias[acuracias$corte == 0.4,]$acuracia)
+
+#0.9489 - 0.9476667
 ```
 
 
@@ -1072,10 +1074,14 @@ tab_esc_fun = as.data.frame(mol1_gam$p.table) %>% tibble::rownames_to_column("te
         mutate(term=replace(term, term == "SICK_ALL1", "doente_k2")) %>%
         mutate(`Std. Error`=replace(`Std. Error`, is.numeric(`Std. Error`), round(`Std. Error`, 3)))%>%
         mutate(`t value`=replace(`t value`, is.numeric(`t value`), round(`t value`,3))) %>%
-        mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, is.character(`Pr(>|t|)`), strtrim(`Pr(>|t|)`,6)))#;tab_esc_fun
+        mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, is.character(`Pr(>|t|)`), strtrim(`Pr(>|t|)`, 6)))%>% 
+  mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` == "0,7099", "0,710")) %>%
+  mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` == "0,0798", "0,080")) %>%
+  mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` == "0,0990", "0,100"))#;tab_esc_fun
+
 
 kable(tab_esc_fun,
-        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional. <0,001 e >-0,001 são referentes à valores pequenos positivos e negativos, respectivamente. k1 e k2 são referentes à k-1 e k-2, respectivamente.",
+        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional. Os sufixos k1 e k2 são referentes à k-1 e k-2, respectivamente.",
         col.names = c("Termo","Estimativa","Erro padrão","Estatística do teste","P-valor"))  %>%
   kable_styling(font_size = 10, latex_options = "HOLD_position")
 
@@ -1121,7 +1127,7 @@ tabela_vacas = stat_vacas %>%
 
 rownames(tabela_vacas) = NULL
 
-colnames(tabela_vacas) = c('Intervalos', 'Média de n.º observações')
+colnames(tabela_vacas) = c('Intervalos', 'Média de n.º observações\nnos envelopes')
 
 acuracia_t = NULL
 for (t in 1:v){
@@ -1161,7 +1167,7 @@ acuracias_intervalo
 ```
 
 
-Os resultados indicam que a utilização de variáveis funcionais trouxe uma melhora para a capacidade de predição em comparação com o modelo misto escalar para essa abordagem, pois a média da área sob a curva da ROC e a média da acurácia, no valor de corte em que essa é otimizada, apresentaram um aumento de 0,007 e .
+Os resultados indicam que a utilização de variáveis funcionais trouxe uma melhora para a capacidade de predição em comparação com o modelo misto escalar para essa abordagem, pois a média da área sob a curva da ROC e a média da acurácia, no valor de corte em que essa é otimizada, apresentaram um aumento de 0,007 e 0,0012, respectivamente.
 
 \newpage
 
