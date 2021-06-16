@@ -206,7 +206,7 @@ $$ \textrm{logito}(p_{ik}) = \beta_0 + \sum_{j=1}^{J}f_j(x_{ij(k-1,k-2)})
 
 Aqui, $\textrm{logito}(p_{ik}) = log(p_{ik}/(1-p_{ik})$, $f_j(x)$ são funções suaves de $x_{ij(k-1,k-2)}$, $k-1$ e $k-2$ indexam 1 e 2 dias anteriores ao dia k, respectivamente, e $j$ indexa a variável explicativa. A função $f_j(x)$ será estimada através de 
 
-$$\hat{f_j}(x) = \sum_{p=1}^{P}B_p(x)\hat{\theta_p} \tag{3},$$ onde $B_p$ são as funções bases e $\hat{\theta_p}$ seus respectivos coeficientes.
+$$\hat{f_j}(x) = \sum_{p=1}^{P}B_p(x)\hat{\theta}_p \tag{3},$$ onde $B_p$ são as funções bases e $\hat{\theta}_p$ seus respectivos coeficientes.
 
 Utilizamos o mecanismo \textit{stepwise} para seleção de variáveis no modelo tendo como critério o AIC (Bozdogan, 1987). O \textit{stepwise} é um processo iterativo para seleção de variáveis explanatórias. Para mais informações sobre o método stepwise, veja Yamashita, Yamashita e Kamimura, 2007. 
 
@@ -232,18 +232,18 @@ Com o intuito de avaliar a capacidade de predição do modelo para animais que f
 As funções do pacote R utilizadas para realizar a validação cruzada e a checagem da qualidade de predição foram desenvolvidas pelo autor do relatório com o auxílio do pacote \textit{Tidyverse} (Wickham et al. 2019). As funções escritas em linguagem R pelo autor se encontram disponíveis no seguinte link: \url{https://github.com/rodrigoforti2000/funcoes-uteis}.
 
 
-```{r, out.width = "99%", fig.cap="Diagrama simplificado da validação cruzada empregado neste trabalho. O conjunto de dados foi separado em 10 envelopes e em cada envelope há observações de 50 animais. Além disso, não há observações de um mesmo animal em envelopes diferentes. Após isso ocorreu 10 repartições onde 9 envelopes eram utilizados para treino e 1 para o teste do modelo."}
+```{r, out.width = "99%", fig.cap="Diagrama simplificado da validação cruzada empregado neste trabalho. O conjunto de dados foi separado em 10 envelopes e em cada envelope há observações de 50 animais. Além disso, não há observações de um mesmo animal em envelopes diferentes. Após isso ocorreu 10 repartições, onde 9 envelopes eram utilizados para treino e 1 para o teste do modelo."}
 img1_path <- "C:/Users/Windows 10/Documents/GitHub/Final_IC/Treino_1.png"
 include_graphics(img1_path)
 ```
 
 # 4 Resultados
 
+Como mostra a Figura 2, as vacas ficaram doentes majoritariamente no período entre o dia do parto até 20 dias após o parto. Após esse período, menos de 1% das observações são de vacas em estado doentio, o que dificulta a predição, pois o estado doentio se torna um evento raro. Por isso, trabalhamos apenas com os dados entre o parto e o vigésimo dia após o parto.
+
 Foram utilizadas duas abordagens  para resolver o problema de classificação entre os dias 0 a 20, após o parto. A primeira abordagem faz o ajuste de um modelo a partir de uma única observação do estado de saúde do animal. A segunda abordagem faz o ajuste de um modelo considerando medidas repetidas de cada animal.
 
 ## 4.1 Resultados do ajuste do modelo sem medidas repetidas de saúde da vaca
-
-Como mostra a Figura 2, as vacas ficaram doentes majoritariamente no período entre 5 até 20 dias após o parto. Após esse período, menos de 1% das observações são de vacas em estado doentio, o que dificulta a predição, pois o estado doentio se torna um evento raro. Por isso, trabalhamos apenas com os dados do dia 5 até o dia 20 após o parto.  
 
 
 ```{r pacotes e funcoes}
@@ -473,15 +473,15 @@ ggplot(df, aes(DiasLac, ProdLeite_k1, col = SICK_ALL)) +
 ```
 
 
-Para a primeira parte ajustamos o modelo em (1). Caso a vaca tenha ficado doente pelo menos uma vez neste período, a variável resposta $Y_i = 1$ e caso contrário, $Y_i = 0$. Neste modelo, para todo $j$ a variável $x_{ij}$ do modelo em (1) corresponde à média da variável $j$ no período 3 dias antes e 4 dias depois do parto.
+Para a primeira parte ajustamos o modelo em (1). Caso a vaca tenha ficado doente pelo menos uma vez entre os dias 5 a 20 após o parto, a variável resposta $Y_i = 1$ e caso contrário, $Y_i = 0$. Neste modelo, para todo $j$ a variável $x_{ij}$ do modelo em (1) corresponde à média da variável $j$ no período 3 dias antes e 4 dias depois do parto.
 
 Utilizando essa abordagem, aproximadamente um terço das vacas estudadas apresentaram pelo menos um distúrbio de saúde no período entre 5 e 20 dias após o parto.
 
 O modelo em (1) foi ajustado inicialmente considerando todas as covariáveis disponíveis da Tabela 1 e 2 na forma escalar. O método \textit{stepwise} foi empregado para a seleção de covariáveis, pois há uma quantidade considerável de variáveis explanatórias no conjunto de dados, o que dificulta a interpretação dos parâmetros e aumenta o risco de multicolinearidade. A partir de \textit{stepwise} tendo como critério o AIC, o modelo com menor AIC foi escolhido como melhor opção para essa Seção 3.1, pois apresentou acurácia e área sob a curva da ROC maiores que o modelo com todas as covariáveis. 
 
-Após a seleção das variáveis por meio de stepwise, o conjunto de dados foi repartido 10 vezes para realização da validação cruzada com o intuito de testar a capacidade preditiva do modelo. Cada uma das iterações da validação cruzada  a curva ROC e a acurácia para cada uma das iterações da validação cruzada, as quais encontram-se na Figura 3. Para calcular a acurácia, utilizamos um valor de corte que define se a observação será classificado como doente ou não doente baseado na probabilidade $p_i$ de (1). Se a observação i apresentou $p_i$ menor que o valor de corte, esta foi classificado como não doente, e se a obsevação i apresentou $p_i$ maior que o valor de corte, esta foi classificada como doente.
+Após a seleção das variáveis por meio de stepwise, o conjunto de dados foi repartido 10 vezes para realização da validação cruzada com o intuito de testar a capacidade preditiva do modelo. Cada uma das iterações da validação cruzada, calculo-se  a curva ROC e a acurácia, as quais encontram-se na Figura 3. Para calcular a acurácia, utilizamos um valor de corte que define se a observação i será classificado como doente ou não doente baseado na probabilidade $p_i$ de (1). Se a observação i apresentou $p_i$ menor que o valor de corte, esta foi classificado como não doente, e se a obsevação i apresentou $p_i$ maior que o valor de corte, esta foi classificada como doente.
 
-Podemos ver que pela Figura 3 que o modelo tem uma acurácia em média de 62,5% a 75,0% em seu ápice, em torno de um corte igual a 0,4. Já as curvas ROC possui uma área sob a curva de 0,735, implicando uqe há 73,5% de chance que o modelo será capaz de distinguir entre animais doentes e não doentes.
+Podemos ver que pela Figura 3 que o modelo tem uma acurácia em média de 62,5% a 75,0% em seu ápice, em torno de um corte igual a 0,4. Já as curvas ROC possui uma área sob a curva de 0,735, implicando que há 73,5% de chance que o modelo será capaz de distinguir entre observações de animais doentes e não doentes.
 
 
 ```{r modelagem summary}
@@ -860,9 +860,9 @@ acuracia_pleno = ggplot(acuracias, aes(corte,acuracia, colour = as.factor(cv))) 
 AUC_pleno + acuracia_pleno
 ```
 
-Para o MMEF, a variável referente aos dias de lactação foi utilizada como funcional. Entre o dia do parto até quinto dia após esse evento, 5,4% das observações são doentes. Entre o quinto e o décimo dia, 16,7% são doentes. Entre o décimo e o décimo quinto, 11,4% são doentes. E entre o décimo quinto e o vigésimo dia após o parto, apenas 4,8% são observações doentes, o que indicia a aparente não linearidade dessa variável em relação ao estado de saúde dos animais. Logo, nesse caso, uma variável referente aos dias de lactação do tipo funcional se encaixa melhor no modelo. As outras variáveis apresentaram comportamentos lineares quando analisadas separadamente em um modelo individual, ou seja, apenas com uma variável. Logo, elas foram mantidas na forma escalar.
+Para o MMEF, a variável referente aos dias de lactação foi utilizada como funcional. Entre o dia do parto até quinto dia após esse evento, 5,4% das observações são doentes. Entre o quinto e o décimo dia, 16,7% são doentes. Entre o décimo e o décimo quinto, 11,4% são doentes. E entre o décimo quinto e o vigésimo dia após o parto, apenas 4,8% são observações doentes, o que indicia a aparente não linearidade da variável dias de lactação em relação ao estado de saúde dos animais. Logo, nesse caso, uma variável referente aos dias de lactação do tipo funcional se encaixa melhor no modelo. As outras variáveis apresentaram comportamentos lineares quando analisadas separadamente em um modelo individual, ou seja, apenas com uma variável. Logo, elas foram mantidas na forma escalar.
 
-As curvas ROC e a acurácia do MMEF, apresentados na Figura 5, apontam que a capacidade de predição é muito boa, pois ambas das métricas usadas apresentaram serem maiores que 0,9, indicando um bom poder preditivo que supera o do MME em 0,007 na média da área sob a curva e 0,0012 na média de acurácia, respectivamente. 
+As curvas ROC e a acurácia do MMEF, apresentados na Figura 5, apontam que a capacidade de predição é muito boa, pois ambas das métricas usadas apresentaram serem maiores que 0,9, indicando um bom poder preditivo que supera o do MME em 0,007 na média da área sob a curva e 0,0012 na média de acurácia. 
 
 
 ```{r ajuste esc,comment=NA}
@@ -1032,7 +1032,7 @@ AUC_pleno + acuracia_pleno
 
 As estimativas dos efeitos escalares do MMEF se encontram na Tabela 4. As variáveis referentes a ruminação durante as últimas 24 horas e estado de saúde nos dois dias anteriores tem efeito positivo no logito, indicando que a probabilidade da vaca ficar doente aumenta quando há um aumento na atividade de ruminação ou se a vaca ficou doente nos dois dias anteriores. A alimentação nas últimas 24 horas tem efeito negativo, indicando que a probabilidade de adoecer diminui quando a vaca está bem alimentada. Além disso, como a estimativa da interação entre o estado de saúde dos dias anteriores tem efeito positivo no logito, isso nos diz que há um aumento na probabilidade de vir a ficar doente quando o animal esteve doente nos dois dias anteriores em comparação à probabilidade de ter estado doente em apenas um dia.
 
-A Figura 6 exibe a curva estimada a variável funcional referente ao dia de lactação. A estimativa dos coeficientes de suavização, $\hat{\theta_p}$, em (3) para a curva de dia de lactação mostrou se estatisticamente significante já que a função estimada $s(DiasLac)$ tem p-valor menor do que 0,001, como descrito na Tabela 5, implicando que não há linearidade na relação entre dia de lactação e probabilidade do animal estar doente.
+A Figura 6 exibe a curva estimada a variável funcional referente ao dia de lactação. A estimativa dos coeficientes de suavização, $\hat{\theta}_p$, em (3) para a curva de dia de lactação mostrou se estatisticamente significante já que a função estimada $s(DiasLac)$ tem p-valor menor do que 0,001, como descrito na Tabela 5, implicando que não há linearidade na relação entre dia de lactação e probabilidade do animal estar doente.
 
 
 
