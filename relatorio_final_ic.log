@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.12) (preloaded format=pdflatex 2021.1.5)  16 JUN 2021 11:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.12) (preloaded format=pdflatex 2021.1.5)  16 JUN 2021 17:34
 entering extended mode
 **./relatorio_final_ic.tex
 (relatorio_final_ic.tex
@@ -951,7 +951,7 @@ File: relatorio_final_ic_files/figure-latex/AUC e acurácia esc-1.pdf Graphic f
 ile (type pdf)
 <use relatorio_final_ic_files/figure-latex/AUC e acurácia esc-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/AUC e acurácia 
-esc-1.pdf  used on input line 579.
+esc-1.pdf  used on input line 576.
 (pdftex.def)             Requested size: 455.2582pt x 202.33696pt.
 [11 <./relatorio_final_ic_files/figure-latex/AUC e acurácia esc-1.pdf>]
 <relatorio_final_ic_files/figure-latex/AUC e acurácia-1.pdf, id=140, 650.43pt 
@@ -960,16 +960,16 @@ File: relatorio_final_ic_files/figure-latex/AUC e acurácia-1.pdf Graphic file
 (type pdf)
 <use relatorio_final_ic_files/figure-latex/AUC e acurácia-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/AUC e acurácia-
-1.pdf  used on input line 605.
+1.pdf  used on input line 602.
 (pdftex.def)             Requested size: 455.2582pt x 202.33696pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 636.
+(Font)              <10> on input line 633.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 636.
+(Font)              <7> on input line 633.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 636.
+(Font)              <5> on input line 633.
 
-Overfull \hbox (28.0604pt too wide) in paragraph at lines 636--661
+Overfull \hbox (28.0604pt too wide) in paragraph at lines 633--658
  [][] 
  []
 
@@ -980,7 +980,7 @@ File: relatorio_final_ic_files/figure-latex/lac plot-1.pdf Graphic file (type p
 df)
 <use relatorio_final_ic_files/figure-latex/lac plot-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/lac plot-1.pdf  
-used on input line 665.
+used on input line 662.
 (pdftex.def)             Requested size: 433.63878pt x 216.81938pt.
 [13 <./relatorio_final_ic_files/figure-latex/lac plot-1.pdf>]
 <relatorio_final_ic_files/figure-latex/plot intervalo-1.pdf, id=165, 650.43pt x
@@ -989,7 +989,7 @@ File: relatorio_final_ic_files/figure-latex/plot intervalo-1.pdf Graphic file (
 type pdf)
 <use relatorio_final_ic_files/figure-latex/plot intervalo-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/plot intervalo-1
-.pdf  used on input line 712.
+.pdf  used on input line 709.
 (pdftex.def)             Requested size: 455.2582pt x 202.33696pt.
 [14 <./relatorio_final_ic_files/figure-latex/plot intervalo-1.pdf>] [15] [16] (
 relatorio_final_ic.aux)
@@ -998,11 +998,11 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 16883 strings out of 479590
- 262340 string characters out of 2859169
+ 16880 strings out of 479590
+ 262313 string characters out of 2859169
  608741 words of memory out of 3000000
  33419 multiletter control sequences out of 15000+200000
- 468790 words of font info for 219 fonts, out of 3000000 for 9000
+ 468660 words of font info for 217 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  81i,11n,82p,947b,368s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/Windows 10/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/base/8
