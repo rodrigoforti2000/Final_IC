@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.12) (preloaded format=pdflatex 2021.1.5)  28 JUN 2021 15:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.12) (preloaded format=pdflatex 2021.1.5)  28 JUN 2021 17:38
 entering extended mode
 **./relatorio_final_ic.tex
 (relatorio_final_ic.tex
@@ -933,6 +933,9 @@ File: relatorio_final_ic_files/figure-latex/unnamed-chunk-2-1.pdf Graphic file
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/unnamed-chunk-2-
 1.pdf  used on input line 465.
 (pdftex.def)             Requested size: 433.63878pt x 216.81938pt.
+
+LaTeX Warning: Command \' invalid in math mode on input line 474.
+
 [8 <C:/Users/Windows 10/Documents/GitHub/Final_IC/Treino_1.png>] [9 <./relatori
 o_final_ic_files/figure-latex/unnamed-chunk-2-1.pdf>]
 <relatorio_final_ic_files/figure-latex/unnamed-chunk-3-1.pdf, id=118, 650.43pt 
@@ -941,7 +944,7 @@ File: relatorio_final_ic_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file
 (type pdf)
 <use relatorio_final_ic_files/figure-latex/unnamed-chunk-3-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/unnamed-chunk-3-
-1.pdf  used on input line 512.
+1.pdf  used on input line 513.
 (pdftex.def)             Requested size: 455.2582pt x 202.33696pt.
 [10 <./relatorio_final_ic_files/figure-latex/unnamed-chunk-3-1.pdf>]
 <relatorio_final_ic_files/figure-latex/AUC e acurácia esc-1.pdf, id=131, 650.4
@@ -950,7 +953,7 @@ File: relatorio_final_ic_files/figure-latex/AUC e acurácia esc-1.pdf Graphic f
 ile (type pdf)
 <use relatorio_final_ic_files/figure-latex/AUC e acurácia esc-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/AUC e acurácia 
-esc-1.pdf  used on input line 600.
+esc-1.pdf  used on input line 601.
 (pdftex.def)             Requested size: 455.2582pt x 202.33696pt.
 [11 <./relatorio_final_ic_files/figure-latex/AUC e acurácia esc-1.pdf>]
 <relatorio_final_ic_files/figure-latex/AUC e acurácia-1.pdf, id=142, 650.43pt 
@@ -959,16 +962,16 @@ File: relatorio_final_ic_files/figure-latex/AUC e acurácia-1.pdf Graphic file
 (type pdf)
 <use relatorio_final_ic_files/figure-latex/AUC e acurácia-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/AUC e acurácia-
-1.pdf  used on input line 625.
+1.pdf  used on input line 626.
 (pdftex.def)             Requested size: 455.2582pt x 202.33696pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 658.
+(Font)              <10> on input line 659.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 658.
+(Font)              <7> on input line 659.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 658.
+(Font)              <5> on input line 659.
 
-Overfull \hbox (28.0604pt too wide) in paragraph at lines 658--683
+Overfull \hbox (28.0604pt too wide) in paragraph at lines 659--684
  [][] 
  []
 
@@ -979,7 +982,7 @@ File: relatorio_final_ic_files/figure-latex/lac plot-1.pdf Graphic file (type p
 df)
 <use relatorio_final_ic_files/figure-latex/lac plot-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/lac plot-1.pdf  
-used on input line 687.
+used on input line 688.
 (pdftex.def)             Requested size: 433.63878pt x 216.81938pt.
 [13 <./relatorio_final_ic_files/figure-latex/lac plot-1.pdf>]
 <relatorio_final_ic_files/figure-latex/plot intervalo-1.pdf, id=167, 650.43pt x
@@ -988,7 +991,7 @@ File: relatorio_final_ic_files/figure-latex/plot intervalo-1.pdf Graphic file (
 type pdf)
 <use relatorio_final_ic_files/figure-latex/plot intervalo-1.pdf>
 Package pdftex.def Info: relatorio_final_ic_files/figure-latex/plot intervalo-1
-.pdf  used on input line 738.
+.pdf  used on input line 739.
 (pdftex.def)             Requested size: 455.2582pt x 202.33696pt.
 [14 <./relatorio_final_ic_files/figure-latex/plot intervalo-1.pdf>] [15] [16] (
 relatorio_final_ic.aux)
@@ -997,11 +1000,11 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 16889 strings out of 479590
- 262672 string characters out of 2859169
+ 16892 strings out of 479590
+ 262696 string characters out of 2859169
  608899 words of memory out of 3000000
  33419 multiletter control sequences out of 15000+200000
- 469044 words of font info for 223 fonts, out of 3000000 for 9000
+ 469174 words of font info for 225 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  81i,11n,82p,1739b,368s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/Windows 10/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/base/8
@@ -1021,7 +1024,7 @@ lic/lm/lmsy8.pfb><C:/Users/Windows 10/AppData/Local/Programs/MiKTeX 2.9/fonts/t
 ype1/urw/times/utmb8a.pfb><C:/Users/Windows 10/AppData/Local/Programs/MiKTeX 2.
 9/fonts/type1/urw/times/utmr8a.pfb><C:/Users/Windows 10/AppData/Local/Programs/
 MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on relatorio_final_ic.pdf (17 pages, 1183369 bytes).
+Output written on relatorio_final_ic.pdf (17 pages, 1185667 bytes).
 PDF statistics:
  321 PDF objects out of 1000 (max. 8388607)
  78 named destinations out of 1000 (max. 500000)
