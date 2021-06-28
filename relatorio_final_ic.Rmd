@@ -207,7 +207,7 @@ Considerando o segundo modelo, ajustamos o modelo que acomoda as medidas repetid
 $$ \textrm{logito}(p_{it}) = \beta_0 + \sum_{j=1}^{J}\beta_jx_{ij(t-1,t-2,...,t-p)} +  \sum_{k=1}^{K}f_k(x_{ik(t-1,t-2,...,t-p)})
 + u_{i} \tag{2}.$$ 
 
-Aqui, $\textrm{logito}(p_{it}) = log(p_{it}/(1-p_{it})$; $j$ indexa a variável explicativa escalar e $k$, a funcional; $J$ e $K$ são o número de covariáveis escalares e covariáveis funcionais no modelo, respectivamente. $\beta_j$ é efeito das covariável escalar $j$ no logito; $f_k(x)$ são funções suaves de $x_{ik(t-1,t-2,...,t-p)}$; $t-1$,$t-2$ e$t-p$ indexam 1, 2 e $p$ dias anteriores ao dia $t$, respectivamente. A função $f_k(x)$ será estimada através de 
+Aqui, $\textrm{logito}(p_{it}) = log(p_{it}/(1-p_{it})$; $j$ indexa a variável explicativa escalar e $k$, a funcional; $J$ e $K$ são o número de covariáveis escalares e covariáveis funcionais no modelo, respectivamente. $\beta_j$ é efeito das covariável escalar $j$ no logito; $f_k(x)$ são funções suaves de $x_{ik(t-1,t-2,...,t-p)}$; $t-1$, $t-2$ e $t-p$ indexam 1, 2 e $p$ dias anteriores ao dia $t$, respectivamente. A função $f_k(x)$ será estimada através de 
 
 $$\hat{f_k}(x) = \sum_{r=1}^{R}B_r(x)\hat{\theta}_r \tag{3},$$ onde $B_r$ são as funções bases e $\hat{\theta}_r$ seus respectivos coeficientes.
 
