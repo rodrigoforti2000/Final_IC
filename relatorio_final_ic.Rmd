@@ -4,6 +4,7 @@ output:
     fig_crop: no
 bibliography: "referencias.bib"
 nocite: '@*'
+csl: "elsevier-harvard.csl"
 link-citations: true
 colorlinks: false
 fontsize: 11pt
@@ -108,7 +109,7 @@ Os dados considerados neste estudo devem ser usados para treinar, validar e test
 O estudo de Cornell compreende três fases, Fase I, Fase II e Fase III. O objetivo do estudo da Fase I é caracterizar o padrão de doença, avaliando como os parâmetros mudam com relação ao status do animal. No estudo da Fase II, o foco é desenvolver alertas que sirvam de indicadores aos agricultores quando uma vaca está doente, visando criar uma combinação de vários parâmetros que informam sobre a saúde do animal. A Fase III do estudo compreende a validação dos métodos usados com dados da Fase I, usando ferramentas desenvolvidas em campo em tempo real e, em seguida, avaliando falsos positivos e sensibilidade do método.
 
 
-A descrição das variáveis do conjunto de dados se encontram na Tabela 1 e 2.
+A descrição das variáveis do conjunto de dados se encontram na Tabelas 1 e 2.
 
 ```{r variáveis}
 library(kableExtra)
@@ -189,20 +190,20 @@ kable(variaveis_cont, "latex", col.names = c("Variável", "Unidade", "Descriçã
 
 ## Objetivos
 
-Neste estudo, os objetivos estão concentrados na Fase I, que busca caracterizar o padrão de doença, avaliando como os parâmetros se comportam com relação ao status do animal. As variáveis utilizadas para modelar a probabilidade do animal estar doente serão consideradas na forma escalar e funcional e a ideia é identificar através do ajuste de modelos uma combinação de vários parâmetros que informem sobre a saúde do animal dentro de um determinado período de tempo. Por exemplo, é de interesse predizer a probabilidade de uma animal ficar doente no período de cinco dias após o parto a partir da curva de lactação do período. Para modelar a probabilidade de um animal ficar doente consideramos um modelo de regressão logística com covariáveis escalares (número de inseminações, histórico de doenças, etc) e funções de covariáveis, como por exemplo uma função dos dias em lactação do animal.
+Neste estudo, os objetivos estão concentrados na Fase I, que busca caracterizar o padrão de doença, avaliando como os parâmetros associados às variáveis de interesse se comportam com relação ao status do animal. As variáveis utilizadas para modelar a probabilidade do animal estar doente serão consideradas na forma escalar e funcional e a ideia é identificar através do ajuste de modelos uma combinação de vários parâmetros que informem sobre a saúde do animal dentro de um determinado período de tempo. Por exemplo, é de interesse predizer a probabilidade de uma animal ficar doente no período de cinco dias após o parto a partir da curva de lactação do período. Para modelar a probabilidade de um animal ficar doente consideramos um modelo de regressão logística com covariáveis escalares (número de inseminações, histórico de doenças, etc) e funções de covariáveis, como por exemplo uma função dos dias em lactação do animal.
 
 
 \newpage
 
 # 1 Modelos estatísticos
 
-Neste estudo, consideramos o ajuste de dois modelos. O primeiro modelo considera como variável resposta se a vaca ficou ou não pelo menos uma vez doente num determinado período de lactação. Já no segundo modelo, consideramos todas as medidas do estado do animal (doente, não doente) num período de lactação. Feito isso, ajustamos o estado do animal no dia $t$ considerando como covariável o estado do animal nos $t-p$ dias antes ao estado do animal no tempo $t$. Assim, por exemplo, para o estado do animal no dia do parto levamos em consideração o estado do animal nos $t-p$ dias anteriores ao dia do parto. Veja que havendo um total de $P$ estados de saúde observados, se $p < P$, teremos que acomodar a correlação entre as medidas restantes do animal (aquelas que não entram como covariáveis), de tal forma que consideramos um efeito aleatório no modelo para acomodar marginalmente essa correlação.
+Neste estudo, consideramos o ajuste de dois modelos. O primeiro modelo considera como variável resposta  uma variável aleatória binárias que vale 1 se a vaca ficou ao menos uma vez doente num determinado período de lactação e 0 caso constrário. Já no segundo modelo, consideramos todas as medidas do estado do animal (doente, não doente) num intervalo do período de lactação. Neste modelo, ajustamos o estado do animal no dia $t$ considerando como covariável o estado do animal nos $t-r$ dias anteriores a $t$. Assim, por exemplo, para o estado do animal no dia do parto levamos em consideração o estado do animal nos $t-r$ dias anteriores ao dia do parto. Veja que havendo um total de $P$ estados de saúde observados, se $r < R$, teremos que acomodar a correlação entre as medidas restantes do animal (aquelas que não entram como covariáveis), de tal forma que consideramos um efeito aleatório no modelo para acomodar marginalmente essa correlação.
 
-Considerando o primeiro modelo, seja $Y_i$ o estado de saúde da vaca $i$ (1 para doente e 0, caso contrário) em um determinado período, e seja $E(Y_i)=p_i$ a probabilidade do animal $i$ estar doente nesse período. Inicialmente ajustamos o modelo de regressão logística (Agresti, 2003) da forma
+Considerando o primeiro modelo, seja $Y_i$ o estado de saúde da vaca $i$ (1 para pelo menos uma vez doente no período de estudo e 0, caso contrário), e seja $E(Y_i)=p_i$ a probabilidade do animal $i$ estar pelo menos uma vez doente nesse período. Inicialmente ajustamos o modelo de regressão logística (Agresti, 2003) da forma
 
 $$ \textrm{logito}(p_i) = \beta_0 + \sum_{j=1}^{J}\beta_jx_{ij} \tag{1},$$ onde $\textrm{logito}(p_i) = log(p_i/(1-p_i)$, $x_{ij}$ representa a $j$-ésima variável explicativa da vaca $i$ e $\beta_j$, o efeito desta variável no logito. Para essa abordagem, cada vaca possui uma única observação.
 
-Considerando o segundo modelo, ajustamos o modelo que acomoda as medidas repetidas de cada animal tomadas entre o dia do parto e 20 dias após este evento. Consideramos um efeito aleatório $u_i \sim N(0,\sigma^2)$ para acomodar a correlação das observações do mesmo animal, devido a repetição de medições das vacas em tempos diferentes. Suponha que $Y_{it}$ seja o estado de saúde da vaca $i$ (1 para doente e 0, caso contrário) em um determinado dia $t$, e seja $E(Y_{it})=p_{it}$ a probabilidade do animal $i$ estar doente no dia $t$. Consideramos o ajuste de
+Considerando o segundo modelo, acomodamos as medidas repetidas de cada animal tomadas entre o dia do parto e 20 dias após este evento. Consideramos um efeito aleatório $u_i \sim N(0,\sigma^2)$ para acomodar a correlação das observações do mesmo. Suponha que $Y_{it}$ seja o estado de saúde da vaca $i$ (1 para doente e 0, caso contrário) em um determinado dia $t$, e seja $E(Y_{it})=p_{it}$ a probabilidade do animal $i$ estar doente no dia $t$. Consideramos o ajuste de $p_{it}$ a partir das variáveos escalares e funcionais, dado por
 
 $$ \textrm{logito}(p_{it}) = \beta_0 + \sum_{j=1}^{J}\beta_jx_{ij(t-1,t-2,...,t-p)} +  \sum_{k=1}^{K}f_k(x_{ik(t-1,t-2,...,t-p)})
 + u_{i} \tag{2}.$$ 
@@ -223,9 +224,13 @@ Além disso, o conjunto de dados apresentou diversos dados faltantes nas covari�
  
 # 3 Validação cruzada 
 
-Para avaliação da capacidade preditiva dos modelos, foi realizada uma validação cruzada com 10 reparticionamentos e com 10 envelopes contendo observações de 50 vacas cada, pois há 500 animais no banco de dados. Em cada repartição, os envelopes foram separados em duas partes: 9 envelopes foram utilizados para o ajuste, i.e. treino, e um envelope foi usado para o verificação de qualidade de predição do modelo, i.e. teste . Veja a Figura 1 que representa um diagrama da validação cruzada que foi empregado. Para mais informações sobre validação cruzada veja Kohavi (2007).
+Para avaliação da capacidade preditiva dos modelos, utilizamos a técnica de validação cruzada. 
 
-A forma de checagem da performance do modelo se deu através da área sob a curva da ROC (Bradley, 1997; Ballings and Van den Poel, 2013) e da acurácia (Novaković et al. 2017) do ajuste aos dados do conjunto de teste. A área sob a curva da ROC quantifica a capacidade do modelo em discriminar entre aqueles animais classificados como doentes dado que de fato são doentes e aqueles classificados como sadios, dado que são sadios. Um modelo com capacidade de predição tão informativo quanto um classificador aleatório tem uma área igual a 0,5, enquanto que um modelo perfeito (predito igual ao observado) tem uma área sob a curva igual a 1. Por outro lado, a acurácia indica qual é a porcentagem de predições corretas que o modelo é capaz de realizar.
+Primeiramente, separamos o conjunto de dados em 10 envelopes e cada envelope contém observações de 50 animais escolhidos aleatoriamente. Colocamos a restrição que as observações de um mesmo animal não podem estar em mais de um envelope.
+
+Após isso, realizamos 10 repartições e em cada repartição os modelos foram treinados com 9 dos 10 envelopes e o envelope faltante foi utilizado para  o teste dos modelos. Veja a Figura 1 que representa um diagrama da validação cruzada que foi empregado. Para mais informações sobre validação cruzada veja Kohavi (2007).
+
+A forma de checagem da performance dos modelos se deu através da área sob a curva da ROC (Bradley, 1997; Ballings and Van den Poel, 2013) e da acurácia (Novaković et al. 2017) do ajuste aos dados do conjunto de teste. A área sob a curva da ROC quantifica a capacidade do modelo em discriminar entre aqueles animais classificados como doentes dado que de fato são doentes e aqueles classificados como sadios, dado que são sadios. Um modelo com capacidade de predição tão informativo quanto um classificador aleatório tem uma área igual a 0,5, enquanto que um modelo perfeito (predito igual ao observado) tem uma área sob a curva igual a 1. Por outro lado, a acurácia indica qual é a porcentagem de predições corretas que o modelo é capaz de realizar.
 
 Com o intuito de avaliar a capacidade de predição do estado de saúde de um animal que venha fazer parte do rebanho, consideramos que animais no conjunto de treino não fazem parte do conjunto de dados para fins de teste simultaneamente. 
 
@@ -245,8 +250,7 @@ Como mostra a Figura 2, as vacas ficaram doentes majoritariamente no período en
 
 Foram utilizadas duas abordagens para resolver o problema de classificação do estado de saúde dos animais entre os dias 0 a 20, após o parto. A primeira abordagem faz o ajuste de um modelo a partir de uma única observação do estado de saúde do animal. A segunda abordagem faz o ajuste de um modelo considerando medidas repetidas de cada animal.
 
-## 4.1 Resultados do ajuste do modelo sem medidas repetidas do estado de saúde da vaca no período entre o dia 5 e 20 dias após o parto
-
+## 4.1 Resultados do ajuste da probabilidade da vaca ter adoecido pelo menos 1 vez no período entre o dia 5 e 20 dias após o parto
 
 ```{r pacotes e funcoes}
 library(tidyverse)
@@ -615,7 +619,7 @@ broom::tidy(mol_summary) %>% mutate_if(is.numeric, round, 3) %>%
 ```
 
 
-## 4.2 Resultados do ajuste do modelo com medidas repetidas do estado de saúde da vaca no período entre o dia do parto e 20 dias após esse evento
+## 4.2 Resultados do ajuste dos dados longitudinais do estado de saúde da vaca no período entre o dia do parto e 20 dias após esse evento
 
 Ajustamos o modelo (2) considerando duas abordagens: uma delas considera somente preditores na forma escalar e a outra considera preditores na forma escalar e na forma funcional. Como o processamento computacional para o ajuste desses modelos é alto, principalmente com o uso de covariáveis na forma funcional, nos guiamos pelos efeitos significativos apresentados na Tabela 3. Consideramos as covariáveis na forma escalar a ruminação, a alimentação e os estados de saúde dos dois dias anteriores.Os outros preditores da Tabela 3 não apresentaram alterações significativas, por isso nós os retiramos do modelo. Além disso, nas duas abordagens um efeito aleatório para cada vaca foi considerado para acomodar a correlação marginal entre as medidas do animal. Chamaremos o modelo da primeira abordagem como modelo misto escalar (MME) e o da segunda de modelo misto escalar-funcional (MMEF).  
 
@@ -1178,7 +1182,7 @@ A incidência de doenças nas vacas leiteiras se concentra entre o dia do parto 
 
 Quando analisa-se 3 dias antes do parto até 4 dias depois desse evento para predizer se a vaca ficará doente entre os dias 5 até o 20 após o parto, temos que um aumento na porcentagem de gordura no leite e no número de dias que o estado da vaca não está grávida aumentam a probabilidade do animal apresentar um distúrbio de saúde após o parto. Já um aumento na quantidade de proteína no leite, no tempo de repouso, no tempo de ruminação e na alimentação diminui a probabilidade do animal ter um problema de saúde.
 
-Quando analisa-se os dias $t-1$ e $t-2$ para predizer o estado de saúde no dia $t$ do animal, temos que o efeito da ruminação nas últimas 24 e 48 horas, assim como o estado de saúde do animal nos dois dias anteriores tem efeito positivo na probabilidade do animal adoecer, indicando que a probabilidade da vaca ficar doente aumenta quando há um aumento na atividade de ruminação ou se a vaca ficou doente nos dois dias anteriores. A alimentação nas últimas 24 horas tem efeito negativo na probabilidade de adoecer, assim a chance de ficar doente diminui quando a vaca está bem alimentada. Além disso, utilizar a covariável referente aos dias em lactação em forma funcional traz uma melhora na capacidade de predição do estado de saúde.
+Quando consideramos dados dos os dias $t-1$ e $t-2$ para predizer o estado de saúde do animal no dia $t$, temos que o efeito da ruminação nas últimas 24 e 48 horas, assim como o estado de saúde do animal nos dois dias anteriores tem efeito positivo na probabilidade do animal adoecer, indicando que a probabilidade da vaca ficar doente aumenta quando há um aumento na atividade de ruminação ou se a vaca ficou doente nos dois dias anteriores. A alimentação nas últimas 24 horas tem efeito negativo na probabilidade de adoecer, assim a chance de ficar doente diminui quando a vaca está bem alimentada. Além disso, utilizar a covariável referente aos dias em lactação em forma funcional traz uma melhora na capacidade de predição do estado de saúde.
 
 
 # 6 Realizações do período
