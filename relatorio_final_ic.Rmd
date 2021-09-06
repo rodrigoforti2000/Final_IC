@@ -205,12 +205,12 @@ $$ \textrm{logito}(p_i) = \beta_0 + \sum_{j=1}^{J}\beta_jx_{ij} \tag{1},$$ onde 
 
 Considerando o segundo modelo, acomodamos as medidas repetidas de cada animal tomadas entre o dia do parto e 20 dias após este evento. Consideramos um efeito aleatório $u_i \sim N(0,\sigma^2)$ para acomodar a correlação das observações do mesmo. Suponha que $Y_{it}$ seja o estado de saúde da vaca $i$ (1 para doente e 0, caso contrário) em um determinado dia $t$, e seja $E(Y_{it})=p_{it}$ a probabilidade do animal $i$ estar doente no dia $t$. Consideramos o ajuste de $p_{it}$ a partir de variáveis escalares e funcionais, dado por
 
-$$ \textrm{logito}(p_{it}) = \beta_0 + \sum_{j=1}^{J}\beta_jx_{ij(t-1,t-2,...,t-p)} +  \sum_{k=1}^{K}f_k(x_{ik(t-1,t-2,...,t-p)})
+$$ \textrm{logito}(p_{it}) = \beta_0 + \sum_{j=1}^{J}\beta_jx_{ij(t-1,t-2,...,t-r)} +  \sum_{k=1}^{K}f_k(x_{ik(t-1,t-2,...,t-r)})
 + u_{i} \tag{2}.$$ 
 
 Aqui, $\textrm{logito}(p_{it}) = log(p_{it}/(1-p_{it})$; $j$ indexa a variável explicativa escalar e $k$, a funcional; $J$ e $K$ são o número de covariáveis escalares e covariáveis funcionais no modelo, respectivamente. $\beta_j$ é efeito das covariável escalar $j$ no logito; $f_k(x)$ são funções suaves de $x_{ik(t-1,t-2,...,t-p)}$; $t-1$, $t-2$ e $t-p$ indexam 1, 2 e $p$ dias anteriores ao dia $t$, respectivamente. A função $f_k(x)$ será estimada através de 
 
-$$\hat{f_k}(x) = \sum_{r=1}^{R}B_r(x)\hat{\theta}_r \tag{3},$$ onde $B_r$ são as funções bases e $\hat{\theta}_r$ seus respectivos coeficientes.
+$$\hat{f_k}(x) = \sum_{s=1}^{S}B_s(x)\hat{\theta}_s \tag{3},$$ onde $B_s$ são as funções bases e $\hat{\theta}_s$ seus respectivos coeficientes.
 
 Utilizamos o mecanismo \textit{stepwise} para seleção de variáveis no modelo tendo como critério de qualidade de ajuste do modelo o AIC (Bozdogan, 1987). O \textit{stepwise} é um processo iterativo para seleção de variáveis explanatórias. Para mais informações sobre o método stepwise, veja Yamashita, Yamashita e Kamimura (2007). 
 
@@ -226,7 +226,7 @@ Além disso, o conjunto de dados apresentou diversos dados faltantes nas covari�
 
 Para avaliação da capacidade preditiva dos modelos, utilizamos a técnica de validação cruzada. Para isso, primeiramente, separamos o conjunto de dados entre 10 envelopes, cada um contendo observações de 50 animais escolhidos aleatoriamente. Colocamos a restrição que as observações de um mesmo animal não podem estar em mais de um envelope.
 
-Na sequência, realizamos 10 repartições e, em cada repartição, os modelos foram treinados com as observações de 9 dos 10 envelopes; o envelope faltante foi utilizado para o teste dos modelos. Veja a Figura 1 que representa um diagrama ilustrativo da validação cruzada que foi empregada. Para mais informações sobre validação cruzada veja Kohavi (2007).
+Na sequência, realizamos 10 repartições, sendo que, para cada repartição, os envelopes foram aleatorizados em 9 envelopes treino e um envelope teste. Em cada repartição, os modelos foram treinados com as observações de 9 dos 10 envelopes; e o envelope teste foi utilizado para teste do modelo. A Figura 1 traz um diagrama ilustrativo da validação cruzada que foi empregada. Para mais informações sobre validação cruzada, veja Kohavi (2007).
 
 A forma de checagem da performance dos modelos se deu através da área sob a curva da ROC (Bradley, 1997; Ballings and Van den Poel, 2013) e da acurácia (Novaković et al. 2017) do ajuste aos dados do conjunto de teste. A área sob a curva da ROC quantifica a capacidade do modelo em discriminar entre aqueles animais classificados como doentes dado que de fato são doentes e aqueles classificados como sadios, dado que são sadios. Um modelo com capacidade de predição tão informativo quanto um classificador aleatório tem uma área igual a 0,5, enquanto que um modelo perfeito (predito igual ao observado) tem uma área sob a curva igual a 1. Por outro lado, a acurácia indica qual é a porcentagem de predições corretas que o modelo é capaz de realizar.
 
@@ -1038,7 +1038,7 @@ AUC_pleno + acuracia_pleno
 
 As estimativas dos efeitos escalares do MMEF se encontram na Tabela 4. O efeito da ruminação nas últimas 24 e 48 horas, assim como o estado de saúde do animal nos dois dias anteriores tem efeito positivo na probabilidade do animal adoecer no dia $t$, indicando que a probabilidade da vaca ficar doente aumenta quando há um aumento na atividade de ruminação ou se a vaca ficou doente nos dois dias anteriores. A alimentação nas últimas 24 horas tem efeito negativo na probabilidade de adoecer, assim a chance de ficar doente diminui quando a vaca está bem alimentada. Além disso, como a estimativa da interação entre o estado de saúde dos dias anteriores tem efeito positivo na probabilidade, isso nos diz que há um aumento na probabilidade de vir a ficar doente quando o animal esteve doente nos dois dias anteriores em comparação à probabilidade de ter estado doente em apenas um dos dias anteriores.
 
-A Figura 6 exibe a curva estimada a variável funcional referente ao dia de lactação. A estimativa dos coeficientes de suavização, $\hat{\theta}_r$, em (3) para a curva de dia de lactação mostrou se estatisticamente significante já que a função estimada $s(DiasLac)$ tem p-valor menor do que 0,001, como descrito na Tabela 5, implicando que não há linearidade na relação entre dia de lactação e probabilidade do animal estar doente.
+A Figura 6 exibe a curva estimada a variável funcional referente ao dia de lactação. A estimativa dos coeficientes de suavização, $\hat{\theta}_s$, em (3) para a curva de dia de lactação mostrou se estatisticamente significante já que a função estimada $s(DiasLac)$ tem p-valor menor do que 0,001, como descrito na Tabela 5, implicando que não há linearidade na relação entre dia de lactação e probabilidade do animal estar doente.
 
 
 
@@ -1068,10 +1068,16 @@ tab_esc_fun = as.data.frame(mol1_gam$p.table) %>% tibble::rownames_to_column("te
         mutate(Estimate=replace(Estimate, is.numeric(Estimate), formatC(Estimate, format = "e", digits = 2))) %>%
         mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, `Pr(>|t|)` < 0.05, "<0,05")) %>%
         mutate(term=replace(term, term == "(Intercept)", "Intercepto")) %>%
-        mutate(term=replace(term, term=="doente_k11", "doente_k1")) %>%
-        mutate(term=replace(term, term=="doente_k21", "doente_k2")) %>%
-        mutate(term=replace(term, term == "doente_k11:doente_k21", "doente_k1:doente_k2")) %>%
-        mutate(term=replace(term, term == "SICK_ALL1", "doente_k2")) %>%
+        mutate(term=replace(term, term=="doente_k11", "doente_t1")) %>%
+        mutate(term=replace(term, term=="doente_k21", "doente_t2")) %>%
+        mutate(term=replace(term, term == "doente_k11:doente_k21", "doente_t1:doente_t2")) %>%
+        mutate(term=replace(term, term == "RuminacaoUltimas24h_k1", "RuminacaoUltimas24h_t1")) %>%
+        mutate(term=replace(term, term == "RuminacaoUltimas24h_k2", "RuminacaoUltimas24h_t2")) %>%
+        mutate(term=replace(term, term == "AlimentacaoUltimas24h_k1", "AlimentacaoUltimas24h_t1")) %>%
+        mutate(term=replace(term, term == "AlimentacaoUltimas24h_k2", "AlimentacaoUltimas24h_t2")) %>%
+        mutate(term=replace(term, term == "RuminacaoUltimas24h_k1:RuminacaoUltimas24h_k2", "RuminacaoUltimas24h_t1:RuminacaoUltimas24h_t2")) %>%
+        mutate(term=replace(term, term == "AlimentacaoUltimas24h_k1:AlimentacaoUltimas24h_k2", "AlimentacaoUltimas24h_t1:AlimentacaoUltimas24h_t2")) %>%
+        mutate(term=replace(term, term == "SICK_ALL1", "doente_t2")) %>%
         mutate(`Std. Error`=replace(`Std. Error`, is.numeric(`Std. Error`), round(`Std. Error`, 3)))%>%
         mutate(`t value`=replace(`t value`, is.numeric(`t value`), round(`t value`,3))) %>%
         mutate(`Pr(>|t|)`=replace(`Pr(>|t|)`, is.character(`Pr(>|t|)`), strtrim(`Pr(>|t|)`, 6)))%>% 
@@ -1082,7 +1088,7 @@ tab_esc_fun = as.data.frame(mol1_gam$p.table) %>% tibble::rownames_to_column("te
 
 
 kable(tab_esc_fun,
-        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional. Os sufixos k1 e k2 são referentes à k-1 e k-2, respectivamente.",
+        caption = "Estimativas dos parâmetros do ajuste do modelo misto escalar-funcional. Os sufixos t1 e t2 são referentes à t-1 e t-2, respectivamente.",
         col.names = c("Termo","Estimativa","Erro padrão","Estatística do teste","P-valor"))  %>%
   kable_styling(font_size = 10, latex_options = "HOLD_position")
 
